@@ -50,7 +50,7 @@ It's applied to module members::
 
 And to class members::
 
-    class SomeObject(object):
+    class SomeObject:
         def behavior_one(self):
             assert True
 
@@ -91,7 +91,7 @@ to see which feature areas have been impacted by a bug (or whatnot).
 
 The feature is enabled by using nested/inner classes, like so::
 
-    class Some(object):
+    class SomeObject:
         def basic_behavior(self):
             assert True
 
