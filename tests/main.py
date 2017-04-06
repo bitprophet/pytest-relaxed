@@ -116,3 +116,14 @@ class SpecModule:
         stdout = testdir.runpytest("-v").stdout.str()
         assert "::a_test" in stdout
         assert "::helper" not in stdout
+
+    def replaces_class_tests_with_custom_recursing_classes(self, testdir):
+        testdir.makepyfile("""
+            class Outer:
+                class Middle:
+                    class Inner:
+                        def oh_look_an_actual_test(self):
+                            pass
+        """)
+        stdout = testdir.runpytest("-v").stdout.str()
+        assert "Outer::Middle::Inner::oh_look_an_actual_test" in stdout
