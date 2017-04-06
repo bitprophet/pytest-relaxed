@@ -75,15 +75,19 @@ avoid fouling up common test extensions:
 - Objects decorated as fixtures with ``@pytest.fixture`` are, of course,
   also skipped.
 
-Don't forget to specify where your tests live
----------------------------------------------
 
-Relaxed discovery is predicated on keeping your tests in some obviously
-namespaced directory structure - so make sure you inform pytest what that is,
-or you'll find it attempting to load *all* of your code as tests!
+Installation & use
+==================
 
-Easiest is probably to use a config file like ``pytest.ini`` or ``setup.cfg``;
-we like the latter, e.g.::
+As with most pytest plugins, it's dead simple:
+
+- ``pip install pytest-relaxed``;
+- Tell pytest where your tests live; otherwise pytest-relaxed will cause
+  pytest to load all of your code as tests! We recommend using ``setup.cfg``
+  or similar::
 
     [tool:pytest]
     testpaths = tests
+
+- Write some tests, as exampled above;
+- ``pytest`` to run the tests, and you're done!
