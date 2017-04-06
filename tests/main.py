@@ -99,3 +99,20 @@ class RelaxedMixin:
             "_ForSomeReasonIAmDefinedHereButAmNotATest",
         ):
             assert substring not in stdout
+
+
+class SpecModule:
+    def skips_imported_names(self, testdir):
+        testdir.makepyfile(_util="""
+            def helper():
+                pass
+        """)
+        testdir.makepyfile("""
+            from _util import helper
+
+            def a_test():
+                pass
+        """)
+        stdout = testdir.runpytest("-v").stdout.str()
+        assert "::a_test" in stdout
+        assert "::helper" not in stdout
