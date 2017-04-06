@@ -1,3 +1,6 @@
+from pytest import skip # noqa
+
+
 pytest_plugins = 'pytester'
 
 
