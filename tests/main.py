@@ -34,7 +34,7 @@ class pytest_collect_file:
         assert "_util.py" not in stdout
 
     def does_not_consume_conftest_files(self, testdir):
-        testdir.makepyfile(mytests="""
+        testdir.makepyfile("""
             def hello_how_are_you():
                 pass
         """)
@@ -43,5 +43,5 @@ class pytest_collect_file:
                 pass
         """)
         stdout = testdir.runpytest("-v").stdout.str()
-        assert "mytests.py::hello_how_are_you" in stdout
+        assert "::hello_how_are_you" in stdout
         assert "conftest.py" not in stdout
