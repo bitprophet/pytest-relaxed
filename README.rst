@@ -138,9 +138,9 @@ Other features
 Trailing underscore hiding
 --------------------------
 
-Trailing underscores in test names are stripped for display; this makes it easy
-to handle situations where you're testing API classes and want to have mirrored
-test classes, with both existing in the same file. For example::
+Trailing underscores in test class names are stripped for display; this makes
+it easy to handle situations where you're testing API classes and want to have
+mirrored test classes, with both existing in the same file. For example::
 
     from mymodule import MyClass
 
@@ -150,10 +150,10 @@ test classes, with both existing in the same file. For example::
                 myobj = MyClass(foo='bar')
                 assert myobj.foo_attr = 'bar'
 
-      class some_method:
-          def foos_the_bars(self):
-              myobj = MyClass(foo='bar')
-              assert myobj.some_method() == 'biz baz'
+        class some_method:
+            def foos_the_bars(self):
+                myobj = MyClass(foo='bar')
+                assert myobj.some_method() == 'biz baz'
 
 In this case, test display will record the ``MyClass_`` tests as simply being
 for ``MyClass``, with the trailing underscore stripped::
