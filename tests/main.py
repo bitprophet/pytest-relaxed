@@ -1,9 +1,6 @@
 pytest_plugins = 'pytester'
 
 
-# TODO: we don't actually _need_ new-style outer classes, do we...no Spec
-# any longer!
-# TODO: trailing underscore stripping
 class FileCollection:
     def only_loads_dot_py_files(self, testdir):
         testdir.makepyfile(somefile="""
