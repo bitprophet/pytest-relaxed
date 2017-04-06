@@ -1,7 +1,7 @@
 pytest_plugins = 'pytester'
 
 
-class FileCollection:
+class pytest_collect_file:
     def only_loads_dot_py_files(self, testdir):
         testdir.makepyfile(somefile="""
             def hello_how_are_you():
