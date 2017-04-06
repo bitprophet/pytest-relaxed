@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     entry_points={
         # TODO: do we need to name the LHS 'pytest_relaxed' too? meh
-        'pytest11': ['relaxed = pytest_relaxed'],
+        'pytest11': ['relaxed = pytest_relaxed.plugin'],
     },
 
     classifiers=[

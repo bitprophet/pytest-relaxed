@@ -3,18 +3,6 @@ import inspect
 from pytest import Class, Instance, Module
 
 
-def pytest_collect_file(path, parent):
-    # Modify file selection to choose anything not private and not a conftest
-    if (
-        path.ext == '.py' and
-        not path.basename.startswith('_') and
-        path.basename != 'conftest.py'
-    ):
-        # Then use our custom module class which performs modified
-        # function/class selection as well as class recursion
-        return SpecModule(path, parent)
-
-
 class RelaxedMixin(object):
     """
     A mixin applying collection rules to both modules and inner/nested classes.
