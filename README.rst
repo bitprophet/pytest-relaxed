@@ -78,6 +78,54 @@ avoid fouling up common test extensions:
   also skipped.
 
 
+Nested class organization
+=========================
+
+On top of the relaxed discovery algorithm, ``pytest-relaxed`` also lets you
+organize tests in a nested fashion, again like the ``spec`` nose plugin or the
+tools that inspired it, such as Ruby's ``rspec``.
+
+This is purely optional, but we find it's a nice middle ground between having a
+proliferation of files or suffering a large, flat test namespace making it hard
+to see which feature areas have been impacted by a bug (or whatnot).
+
+The feature is enabled by using nested/inner classes, like so::
+
+    class Some(object):
+        def basic_behavior(self):
+            assert True
+
+        class init:
+            "__init__"
+
+            def no_args_required(self):
+                assert True
+
+            def accepts_some_arg(self):
+                assert True
+
+            def sets_up_config(self):
+                assert False
+
+        class some_method:
+            def accepts_whatever_params(self):
+                assert False
+
+            def base_behavior(self):
+                assert True
+
+            class when_config_says_foo:
+                def it_behaves_like_this(self):
+                    assert False
+
+            class when_config_says_bar:
+                def it_behaves_like_this(self):
+                    assert True
+
+Test discovery on these inner classes is recursive, so you *can* nest them as
+deeply as you like. Naturally, as with all Python code, sometimes you can have
+too much of a good thing...but that's up to you.
+
 Installation & use
 ==================
 
