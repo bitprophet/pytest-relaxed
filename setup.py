@@ -8,8 +8,10 @@ setup(
     description='Relaxed test discovery/organization for pytest',
     license='BSD',
 
+    url="https://github.com/bitprophet/pytest-relaxed",
     author='Jeff Forcier',
     author_email='jeff@bitprophet.org',
+    long_description="\n" + open('README.rst').read(),
 
     packages=find_packages(),
     entry_points={
