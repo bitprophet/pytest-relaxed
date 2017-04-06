@@ -19,6 +19,11 @@ setup(
         'pytest11': ['relaxed = pytest_relaxed.plugin'],
     },
 
+    # TODO: is it worth tightening/loosening this? At the moment I don't know
+    # of any specific pytest releases/bugs/features that limit me besides
+    # presumable major version API compat concerns.
+    install_requires=['pytest>=3,<4'],
+
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Pytest',
