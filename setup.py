@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pytest-relaxed',
-    version='0.0.4',
+    version='0.1.0',
     description='Relaxed test discovery/organization for pytest',
     license='BSD',
 
