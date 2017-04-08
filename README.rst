@@ -135,15 +135,24 @@ too much of a good thing...but that's up to you.
 Installation & use
 ==================
 
-As with most pytest plugins, it's dead simple:
+As with most pytest plugins, it's quite simple:
 
 - ``pip install pytest-relaxed``;
-- Tell pytest where your tests live; otherwise pytest-relaxed will cause
-  pytest to load all of your code as tests! We recommend using ``setup.cfg``
-  or similar::
+- Tell pytest where your tests live via the ``testpaths`` option; otherwise
+  pytest-relaxed will cause pytest to load all of your non-test code as tests!
+- Not required, but **strongly recommended**: configure pytest's default
+  filename pattern (``python_files``) to be an unqualified glob (``*``).
+
+    - This doesn't impact (our) test discovery, but pytest's assertion
+      'rewriting' (the feature that turns ``assert var == othervar`` into
+      ``assert 17 == 2`` during error display) reuses this setting when
+      determining which files to manipulate.
+
+- Thus, a recommended ``setup.cfg`` (or ``pytest.ini``, sans the header) is::
 
     [tool:pytest]
     testpaths = tests
+    python_files = *
 
 - Write some tests, as exampled above;
 - ``pytest`` to run the tests, and you're done!
