@@ -63,8 +63,8 @@ And to class members::
         def it_does_things(self):
             assert self._helper() == 'whatever'
 
-Exceptions
-----------
+Special cases
+-------------
 
 As you might expect, there are a few more special cases around discovery to
 avoid fouling up common test extensions:
