@@ -127,15 +127,3 @@ class SpecModule:
         """)
         stdout = testdir.runpytest("-v").stdout.str()
         assert "Outer::Middle::Inner::oh_look_an_actual_test" in stdout
-
-    def strips_trailing_underscores_from_class_names(self, testdir):
-        skip()
-        testdir.makepyfile("""
-            class Outer_:
-                class Middle_:
-                    class Inner_:
-                        def oh_look_an_actual_test(self):
-                            pass
-        """)
-        stdout = testdir.runpytest("-v").stdout.str()
-        assert "Outer::Middle::Inner::oh_look_an_actual_test" in stdout

@@ -132,38 +132,6 @@ too much of a good thing...but that's up to you.
     doesn't actually care. This is (naturally) moot under Python 3.
 
 
-Other features
-==============
-
-Trailing underscore hiding
---------------------------
-
-Trailing underscores in test class names are stripped for display; this makes
-it easy to handle situations where you're testing API classes and want to have
-mirrored test classes, with both existing in the same file. For example::
-
-    from mymodule import MyClass
-
-    class MyClass_:
-        class init:
-            def accepts_foo_kwarg(self):
-                myobj = MyClass(foo='bar')
-                assert myobj.foo_attr = 'bar'
-
-        class some_method:
-            def foos_the_bars(self):
-                myobj = MyClass(foo='bar')
-                assert myobj.some_method() == 'biz baz'
-
-In this case, test display will record the ``MyClass_`` tests as simply being
-for ``MyClass``, with the trailing underscore stripped::
-
-    $ pytest --verbose
-    <snip>
-    tests/myclass.py::MyClass::init::accepts_foo_kwarg PASSED
-    tests/myclass.py::MyClass::some_method::foos_the_bars PASSED
-
-
 Installation & use
 ==================
 
