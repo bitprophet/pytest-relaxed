@@ -1,6 +1,7 @@
 from pytest import skip # noqa
 
 
+# For 'testdir' fixture, mostly
 pytest_plugins = 'pytester'
 
 
@@ -127,3 +128,88 @@ class SpecModule:
         """)
         stdout = testdir.runpytest("-v").stdout.str()
         assert "Outer::Middle::Inner::oh_look_an_actual_test" in stdout
+
+
+class SpecInstance:
+    def methods_self_objects_exhibit_class_attributes(self, testdir):
+        # Mostly a sanity test; pytest seems to get out of the way enough that
+        # the test is truly a bound method & the 'self' is truly an instance of
+        # the class.
+        testdir.makepyfile("""
+            class MyClass:
+                an_attr = 5
+
+                def some_test(self):
+                    assert hasattr(self, 'an_attr')
+                    assert self.an_attr == 5
+        """)
+        # TODO: first thought was "why is this not automatic?", then realized
+        # "duh, it'd be annoying if you wanted to test failure related behavior
+        # a lot"...but still want some slightly nicer helper I think
+        assert testdir.runpytest().ret == 0
+
+    def nested_self_objects_exhibit_parent_attributes(self, testdir):
+        # TODO: really starting to think going back to 'real' fixture files
+        # makes more sense; this is all real python code and is eval'd as such,
+        # but it is only editable and viewable as a string. No highlighting.
+        # TODO: downside is that presumably over many tests, the disk hit (even
+        # on SSD??) might add up?
+        testdir.makepyfile("""
+            class MyClass:
+                an_attr = 5
+
+                class Inner:
+                    def inner_test(self):
+                        assert hasattr(self, 'an_attr')
+                        assert self.an_attr == 5
+        """)
+        assert testdir.runpytest().ret == 0
+
+    def nesting_is_infinite(self, testdir):
+        testdir.makepyfile("""
+            class MyClass:
+                an_attr = 5
+
+                class Inner:
+                    class Deeper:
+                        class EvenDeeper:
+                            def innermost_test(self):
+                                assert hasattr(self, 'an_attr')
+                                assert self.an_attr == 5
+        """)
+        assert testdir.runpytest().ret == 0
+
+    def overriding_works_naturally(self, testdir):
+        testdir.makepyfile("""
+            class MyClass:
+                an_attr = 5
+
+                class Inner:
+                    an_attr = 7
+
+                    def inner_test(self):
+                        assert self.an_attr == 7
+        """)
+        assert testdir.runpytest().ret == 0
+
+    def test_methods_from_outer_classes_are_not_copied(self, testdir):
+        testdir.makepyfile("""
+            class MyClass:
+                def outer_test(self):
+                    pass
+
+                class Inner:
+                    def inner_test(self):
+                        assert not hasattr(self, 'outer_test')
+        """)
+        assert testdir.runpytest().ret == 0
+
+    def module_contents_are_not_copied_into_top_level_classes(self, testdir):
+        testdir.makepyfile("""
+            module_constant = 17
+
+            class MyClass:
+                def outer_test(self):
+                    assert not hasattr(self, 'module_constant')
+        """)
+        assert testdir.runpytest().ret == 0

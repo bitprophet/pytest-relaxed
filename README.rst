@@ -131,6 +131,35 @@ too much of a good thing...but that's up to you.
     write them as e.g. ``class SomethingUnderTest(object):`` - pytest-relaxed
     doesn't actually care. This is (naturally) moot under Python 3.
 
+Nested class attributes
+-----------------------
+
+If you're namespacing your tests via nested classes, you may find yourself
+wanting to reference the enclosing "scope" of the outer classes they live in,
+such as class attributes. pytest-relaxed automatically copies such attributes
+onto inner classes during the test collection phase, allowing you to write code
+like this::
+
+    class Outer:
+        behavior_one = True
+
+        def outer_test(self):
+            assert self.behavior_one
+
+        class Inner:
+            behavior_two = True
+
+            def inner_test(self):
+                assert self.behavior_one and self.behavior_two
+
+Notably:
+
+- The behavior is nested, infinitely, as you might expect;
+- Attributes that look like classes or methods themselves, are not copied;
+- Only attributes _not_ already present on the inner class are copied; thus
+  inner classes may naturally "override" attributes, just as with class
+  inheritance.
+
 
 Installation & use
 ==================

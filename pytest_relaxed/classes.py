@@ -1,4 +1,7 @@
 import inspect
+import types
+
+import six
 
 from pytest import Class, Instance, Module
 
@@ -59,6 +62,35 @@ class SpecClass(Class):
 
 
 class SpecInstance(RelaxedMixin, Instance):
+    def _getobj(self):
+        # Regular object-making first
+        obj = super(SpecInstance, self)._getobj()
+        # Then decorate it with our parent's extra attributes, allowing nested
+        # test classes to appear as an aggregate of parents' "scopes".
+        # NOTE: need parent.parent due to instance->class hierarchy
+        # NOTE: of course, skipping if we've gone out the top into a module etc
+        if (
+            not hasattr(self, 'parent')
+            or not hasattr(self.parent, 'parent')
+            or not isinstance(self.parent.parent, SpecInstance)
+        ):
+            return obj
+        parent_obj = self.parent.parent.obj
+        # Obtain parent attributes not found on our obj (serves as both a
+        # useful identifier of "stuff added to an outer class" and a way of
+        # ensuring that we can override such attrs), and set them on obj
+        delta = set(dir(parent_obj)).difference(set(dir(obj)))
+        for name in delta:
+            value = getattr(parent_obj, name)
+            # Skip past anything that looks like a method or class
+            if (
+                isinstance(value, six.class_types)
+                or isinstance(value, types.MethodType)
+            ):
+                continue
+            setattr(obj, name, value)
+        return obj
+
     def makeitem(self, name, obj):
         # NOTE: no need to modify collect() this time, just mutate item
         # creation.
