@@ -12,7 +12,7 @@ def test(c):
     c.run("pytest --verbose --color=yes")
 
 @task
-def coverage(c):
+def coverage(c, html=True):
     """
     Run coverage with coverage.py.
     """
@@ -25,8 +25,9 @@ def coverage(c):
     # NOTE: this does NOT hold true for NON-PYTEST code, so
     # pytest-relaxed-USING modules can happily use pytest-cov.
     c.run("coverage run --source=pytest_relaxed -m pytest")
-    c.run("coverage html")
-    c.run("open htmlcov/index.html")
+    if html:
+        c.run("coverage html")
+        c.run("open htmlcov/index.html")
 
 
 ns = Collection(
