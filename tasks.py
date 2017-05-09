@@ -1,15 +1,7 @@
 from invoke import task, Collection
 from invocations.packaging import release
+from invocations import pytest as pytests
 
-
-# TODO: once this stuff is stable and I start switching my other projects to be
-# pytest-oriented, move this into invocations somehow.
-@task
-def test(c):
-    """
-    Run verbose pytests.
-    """
-    c.run("pytest --verbose --color=yes")
 
 @task
 def coverage(c, html=True):
@@ -32,8 +24,6 @@ def coverage(c, html=True):
 
 ns = Collection(
     coverage,
-    test,
+    pytests.test,
     packaging=release,
 )
-ns.configure({
-})
