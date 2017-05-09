@@ -26,6 +26,10 @@ setup(
         'pytest>=3,<4',
         # TODO: ditto; six is so widely used it's prob worth having a broad pin
         'six>=1,<2',
+        # TODO: ditto again!
+        # TODO: but also, we could make this optional if it somehow ever caused
+        # issues for anyone. Only necessary for @raises right now.
+        'decorator>=4,<5',
     ],
 
     classifiers=[

@@ -167,14 +167,17 @@ Other test helpers
 ``pytest-relaxed`` offers a few other random lightweight test-related utilities
 that don't merit their own PyPI entries (most ported from ``spec``), such as:
 
-- ``pytest_relaxed.trap``, a decorator for use on test functions and/or
-  test helpers/subroutines which is similar to pytest's own
-  ``capsys``/``capfd`` fixtures in that it allows capture of stdout/err.
+- ``trap``, a decorator for use on test functions and/or test
+  helpers/subroutines which is similar to pytest's own ``capsys``/``capfd``
+  fixtures in that it allows capture of stdout/err.
 
     - It offers a slightly simpler API: it replaces ``sys.(stdout|stderr)`` with
       ``IO`` objects which can be ``getvalue()``'d as needed.
     - More importantly, it can wrap arbitrary callables, which is useful for
       code-sharing use cases that don't easily fit into the design of fixtures.
+
+- ``raises``, a wrapper around ``pytest.raises`` which works as a decorator,
+  similar to the Nose testing tool of the same name.
 
 
 Installation & use
