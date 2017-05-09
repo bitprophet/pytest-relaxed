@@ -29,8 +29,8 @@ class RelaxedMixin(PyCollector):
 
     def istestfunction(self, obj, name):
         return not (
-            name.startswith('_')
-            or name in ('setup', 'teardown')
+            name.startswith('_') or
+            name in ('setup', 'teardown')
         )
 
 
@@ -97,9 +97,9 @@ class SpecInstance(RelaxedMixin, Instance):
         # NOTE: need parent.parent due to instance->class hierarchy
         # NOTE: of course, skipping if we've gone out the top into a module etc
         if (
-            not hasattr(self, 'parent')
-            or not hasattr(self.parent, 'parent')
-            or not isinstance(self.parent.parent, SpecInstance)
+            not hasattr(self, 'parent') or
+            not hasattr(self.parent, 'parent') or
+            not isinstance(self.parent.parent, SpecInstance)
         ):
             return obj
         parent_obj = self.parent.parent.obj
@@ -111,8 +111,8 @@ class SpecInstance(RelaxedMixin, Instance):
             value = getattr(parent_obj, name)
             # Skip past anything that looks like a method or class
             if (
-                isinstance(value, six.class_types)
-                or isinstance(value, types.MethodType)
+                isinstance(value, six.class_types) or
+                isinstance(value, types.MethodType)
             ):
                 continue
             setattr(obj, name, value)
