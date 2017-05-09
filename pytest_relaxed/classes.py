@@ -4,18 +4,30 @@ import types
 import six
 
 from pytest import Class, Instance, Module
+# NOTE: don't see any other way to get access to pytest innards besides using
+# the underscored name :(
+from _pytest.python import PyCollector
 
 
-class RelaxedMixin(object):
+# All other classes in here currently inherit from PyCollector, and it is what
+# defines the default istestfunction/istestclass, so makes sense to inherit
+# from it for our mixin. (PyobjMixin, another commonly found class, offers
+# nothing of interest to us however.)
+class RelaxedMixin(PyCollector):
     """
     A mixin applying collection rules to both modules and inner/nested classes.
     """
-    def classnamefilter(self, name):
-        # Override default class detection to accept anything public.
+    # TODO:
+    # - worth calling super() in these? Difficult to know what to do with it;
+    # it would say "no" to lots of stuff we want to say "yes" to.
+    # - are there other tests to apply to 'obj' in a vacuum? so far only thing
+    # we test 'obj' for is its membership in a module, which must happen inside
+    # SpecModule's override.
+
+    def istestclass(self, obj, name):
         return not name.startswith('_')
 
-    def funcnamefilter(self, name):
-        # Override default func/method detection to accept anything public.
+    def istestfunction(self, obj, name):
         return not (
             name.startswith('_')
             or name in ('setup', 'teardown')
@@ -23,19 +35,26 @@ class RelaxedMixin(object):
 
 
 class SpecModule(RelaxedMixin, Module):
+    def istestfunction(self, obj, name):
+        # First run our super() test, which should be RelaxedMixin's.
+        good_name = super(SpecModule, self).istestfunction(obj, name)
+        # If RelaxedMixin said no, we can't really say yes, as the name itself
+        # was bad - private, other non test name like setup(), etc
+        if not good_name:
+            return False
+        # Here, we dig further based on our own wrapped module obj, by
+        # rejecting anything not defined locally.
+        if inspect.getmodule(obj) is not self.obj:
+            return False
+        # No other complaints -> it's probably good
+        return True
+
     def collect(self):
         # Get whatever our parent picked up as valid test items (given our
         # relaxed name constraints above). It'll be nearly all module contents.
         items = super(SpecModule, self).collect()
         collected = []
         for item in items:
-            # Filter for only those matches that appear locally defined.
-            # TODO: is it better to do this via overriding of
-            # istestclass()/istestfunction()?
-            # TODO: and if so, can we just fold the name filtering into those
-            # too?
-            if item.module is not inspect.getmodule(item.obj):
-                continue
             # Replace Class objects with recursive SpecInstances (via
             # SpecClasses, so we don't lose some bits of parent Class).
             # TODO: this may be way more than is necessary; possible we can
@@ -43,7 +62,7 @@ class SpecModule(RelaxedMixin, Module):
             # relationships correctly?
             if isinstance(item, Class):
                 item = SpecClass(item.name, item.parent)
-            # Collect
+            # Collect regardless of whether we replaced the item
             collected.append(item)
         return collected
 
