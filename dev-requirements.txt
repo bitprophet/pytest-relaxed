@@ -3,7 +3,7 @@
 #
 
 # Linting
-flake8==3.3.0
+flake8>=2.4,<3 # until we drop 2.6
 # Packaging
 twine==1.8.1
 # Test coverage
