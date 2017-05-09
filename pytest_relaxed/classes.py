@@ -35,9 +35,9 @@ class RelaxedMixin(PyCollector):
 
 
 class SpecModule(RelaxedMixin, Module):
-    def istestfunction(self, obj, name):
+    def _is_test_obj(self, test_func, obj, name):
         # First run our super() test, which should be RelaxedMixin's.
-        good_name = super(SpecModule, self).istestfunction(obj, name)
+        good_name = getattr(super(SpecModule, self), test_func)(obj, name)
         # If RelaxedMixin said no, we can't really say yes, as the name itself
         # was bad - private, other non test name like setup(), etc
         if not good_name:
@@ -48,6 +48,12 @@ class SpecModule(RelaxedMixin, Module):
             return False
         # No other complaints -> it's probably good
         return True
+
+    def istestfunction(self, obj, name):
+        return self._is_test_obj('istestfunction', obj, name)
+
+    def istestclass(self, obj, name):
+        return self._is_test_obj('istestclass', obj, name)
 
     def collect(self):
         # Get whatever our parent picked up as valid test items (given our

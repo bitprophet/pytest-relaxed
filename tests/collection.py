@@ -140,13 +140,19 @@ class SpecModule:
         stdout = testdir.runpytest("-v").stdout.str()
         assert "some_uncallable" not in stdout
 
-    def skips_imported_names(self, testdir):
+    def skips_imported_objects(self, testdir):
         testdir.makepyfile(_util="""
             def helper():
                 pass
+
+            class Helper:
+                pass
+
+            class NewHelper(object):
+                pass
         """)
         testdir.makepyfile("""
-            from _util import helper
+            from _util import helper, Helper, NewHelper
 
             def a_test():
                 pass
@@ -154,28 +160,39 @@ class SpecModule:
         stdout = testdir.runpytest("-v").stdout.str()
         assert "::a_test" in stdout
         assert "::helper" not in stdout
+        assert "::Helper" not in stdout
+        assert "::NewHelper" not in stdout
 
     def does_not_warn_about_imported_names(self, testdir):
         # Trigger is something that appears callable but isn't a real function;
         # almost any callable class seems to suffice. (Real world triggers are
         # things like invoke/fabric Task objects.)
+        # Can also be triggered if our collection is buggy and does not
+        # explicitly reject imported classes (i.e. if we only reject funcs).
         testdir.makepyfile(_util="""
             class Callable(object):
                 def __call__(self):
                     pass
 
             helper = Callable()
+
+            class HelperClass:
+                def __init__(self):
+                    pass
         """)
         testdir.makepyfile("""
-            from _util import helper
+            from _util import helper, HelperClass
 
             def a_test():
                 pass
         """)
         stdout = testdir.runpytest("-sv").stdout.str()
         # TODO: more flexible test in case text changes? eh.
-        warning = "cannot collect 'helper' because it is not a function"
-        assert warning not in stdout
+        for warning in (
+            "cannot collect 'helper' because it is not a function",
+            "cannot collect test class 'HelperClass'",
+        ):
+            assert warning not in stdout
 
     def replaces_class_tests_with_custom_recursing_classes(self, testdir):
         testdir.makepyfile("""
