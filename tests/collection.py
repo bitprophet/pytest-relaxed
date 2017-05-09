@@ -145,6 +145,28 @@ class SpecModule:
         assert "::a_test" in stdout
         assert "::helper" not in stdout
 
+    def does_not_warn_about_imported_names(self, testdir):
+        # Trigger is something that appears callable but isn't a real function;
+        # almost any callable class seems to suffice. (Real world triggers are
+        # things like invoke/fabric Task objects.)
+        testdir.makepyfile(_util="""
+            class Callable(object):
+                def __call__(self):
+                    pass
+
+            helper = Callable()
+        """)
+        testdir.makepyfile("""
+            from _util import helper
+
+            def a_test():
+                pass
+        """)
+        stdout = testdir.runpytest("-sv").stdout.str()
+        # TODO: more flexible test in case text changes? eh.
+        warning = "cannot collect 'helper' because it is not a function"
+        assert warning not in stdout
+
     def replaces_class_tests_with_custom_recursing_classes(self, testdir):
         testdir.makepyfile("""
             class Outer:
