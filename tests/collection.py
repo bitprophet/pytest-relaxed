@@ -130,6 +130,16 @@ class RelaxedMixin:
         assert "::actual_nested_test" in stdout
 
 class SpecModule:
+    def skips_non_callable_items(self, testdir):
+        testdir.makepyfile("""
+            some_uncallable = 17
+
+            def some_callable():
+                pass
+        """)
+        stdout = testdir.runpytest("-v").stdout.str()
+        assert "some_uncallable" not in stdout
+
     def skips_imported_names(self, testdir):
         testdir.makepyfile(_util="""
             def helper():
