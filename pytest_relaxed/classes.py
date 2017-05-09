@@ -16,8 +16,10 @@ class RelaxedMixin(object):
 
     def funcnamefilter(self, name):
         # Override default func/method detection to accept anything public.
-        # TODO: strip out setup/teardown/other special names
-        return not name.startswith('_')
+        return not (
+            name.startswith('_')
+            or name in ('setup', 'teardown')
+        )
 
 
 class SpecModule(RelaxedMixin, Module):
