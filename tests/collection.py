@@ -101,6 +101,33 @@ class RelaxedMixin:
         ):
             assert substring not in stdout
 
+    def skips_setup_and_teardown(self, testdir):
+        # TODO: probably other special names we're still missing?
+        testdir.makepyfile("""
+            def setup():
+                pass
+
+            def teardown():
+                pass
+
+            def actual_test():
+                pass
+
+            class Outer:
+                def setup(self):
+                    pass
+
+                def teardown(self):
+                    pass
+
+                def actual_nested_test(self):
+                    pass
+        """)
+        stdout = testdir.runpytest("-v").stdout.str()
+        assert "::setup" not in stdout
+        assert "::teardown" not in stdout
+        assert "::actual_test" in stdout
+        assert "::actual_nested_test" in stdout
 
 class SpecModule:
     def skips_imported_names(self, testdir):
