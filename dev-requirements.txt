@@ -13,8 +13,8 @@ coverage==4.3.4
 # Travis only, but why not
 codecov==1.6.3
 # Task running
-invoke==0.15.0
-invocations==0.16.0
+invoke==0.17.0
+invocations==0.19.0
 
 #
 # Transitive dependencies
