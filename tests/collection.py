@@ -129,6 +129,7 @@ class RelaxedMixin:
         assert "::actual_test" in stdout
         assert "::actual_nested_test" in stdout
 
+
 class SpecModule:
     def skips_non_callable_items(self, testdir):
         testdir.makepyfile("""
@@ -228,8 +229,6 @@ class SpecInstance:
         # TODO: really starting to think going back to 'real' fixture files
         # makes more sense; this is all real python code and is eval'd as such,
         # but it is only editable and viewable as a string. No highlighting.
-        # TODO: downside is that presumably over many tests, the disk hit (even
-        # on SSD??) might add up?
         testdir.makepyfile("""
             class MyClass:
                 an_attr = 5
