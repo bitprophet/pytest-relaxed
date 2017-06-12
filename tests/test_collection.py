@@ -5,8 +5,8 @@ from pytest import skip # noqa
 pytest_plugins = 'pytester'
 
 
-class pytest_collect_file:
-    def only_loads_dot_py_files(self, testdir):
+class Test_pytest_collect_file(object):
+    def test_only_loads_dot_py_files(self, testdir):
         testdir.makepyfile(somefile="""
             def hello_how_are_you():
                 pass
@@ -21,7 +21,7 @@ class pytest_collect_file:
         # as pytest tries importing 'someotherfile'. But eh.
         assert "whatever.txt" not in stdout
 
-    def skips_underscored_files(self, testdir):
+    def test_skips_underscored_files(self, testdir):
         testdir.makepyfile(hastests="""
             from _util import helper
 
@@ -37,7 +37,7 @@ class pytest_collect_file:
         assert "hastests.py::hello_how_are_you" in stdout
         assert "_util.py" not in stdout
 
-    def does_not_consume_conftest_files(self, testdir):
+    def test_does_not_consume_conftest_files(self, testdir):
         testdir.makepyfile("""
             def hello_how_are_you():
                 pass
@@ -51,8 +51,8 @@ class pytest_collect_file:
         assert "conftest.py" not in stdout
 
 
-class RelaxedMixin:
-    def selects_all_non_underscored_members(self, testdir):
+class TestRelaxedMixin:
+    def test_selects_all_non_underscored_members(self, testdir):
         testdir.makepyfile("""
             def hello_how_are_you():
                 pass
@@ -101,7 +101,7 @@ class RelaxedMixin:
         ):
             assert substring not in stdout
 
-    def skips_setup_and_teardown(self, testdir):
+    def test_skips_setup_and_teardown(self, testdir):
         # TODO: probably other special names we're still missing?
         testdir.makepyfile("""
             def setup():
@@ -130,8 +130,8 @@ class RelaxedMixin:
         assert "::actual_nested_test" in stdout
 
 
-class SpecModule:
-    def skips_non_callable_items(self, testdir):
+class TestSpecModule:
+    def test_skips_non_callable_items(self, testdir):
         testdir.makepyfile("""
             some_uncallable = 17
 
@@ -141,7 +141,7 @@ class SpecModule:
         stdout = testdir.runpytest("-v").stdout.str()
         assert "some_uncallable" not in stdout
 
-    def skips_imported_objects(self, testdir):
+    def test_skips_imported_objects(self, testdir):
         testdir.makepyfile(_util="""
             def helper():
                 pass
@@ -164,7 +164,7 @@ class SpecModule:
         assert "::Helper" not in stdout
         assert "::NewHelper" not in stdout
 
-    def does_not_warn_about_imported_names(self, testdir):
+    def test_does_not_warn_about_imported_names(self, testdir):
         # Trigger is something that appears callable but isn't a real function;
         # almost any callable class seems to suffice. (Real world triggers are
         # things like invoke/fabric Task objects.)
@@ -195,7 +195,7 @@ class SpecModule:
         ):
             assert warning not in stdout
 
-    def replaces_class_tests_with_custom_recursing_classes(self, testdir):
+    def test_replaces_class_tests_with_custom_recursing_classes(self, testdir):
         testdir.makepyfile("""
             class Outer:
                 class Middle:
@@ -207,8 +207,8 @@ class SpecModule:
         assert "Outer::Middle::Inner::oh_look_an_actual_test" in stdout
 
 
-class SpecInstance:
-    def methods_self_objects_exhibit_class_attributes(self, testdir):
+class TestSpecInstance:
+    def test_methods_self_objects_exhibit_class_attributes(self, testdir):
         # Mostly a sanity test; pytest seems to get out of the way enough that
         # the test is truly a bound method & the 'self' is truly an instance of
         # the class.
@@ -225,7 +225,7 @@ class SpecInstance:
         # a lot"...but still want some slightly nicer helper I think
         assert testdir.runpytest().ret == 0
 
-    def nested_self_objects_exhibit_parent_attributes(self, testdir):
+    def test_nested_self_objects_exhibit_parent_attributes(self, testdir):
         # TODO: really starting to think going back to 'real' fixture files
         # makes more sense; this is all real python code and is eval'd as such,
         # but it is only editable and viewable as a string. No highlighting.
@@ -240,7 +240,7 @@ class SpecInstance:
         """)
         assert testdir.runpytest().ret == 0
 
-    def nesting_is_infinite(self, testdir):
+    def test_nesting_is_infinite(self, testdir):
         testdir.makepyfile("""
             class MyClass:
                 an_attr = 5
@@ -254,7 +254,7 @@ class SpecInstance:
         """)
         assert testdir.runpytest().ret == 0
 
-    def overriding_works_naturally(self, testdir):
+    def test_overriding_works_naturally(self, testdir):
         testdir.makepyfile("""
             class MyClass:
                 an_attr = 5
@@ -279,7 +279,7 @@ class SpecInstance:
         """)
         assert testdir.runpytest().ret == 0
 
-    def module_contents_are_not_copied_into_top_level_classes(self, testdir):
+    def test_module_contents_are_not_copied_into_top_level_classes(self, testdir):
         testdir.makepyfile("""
             module_constant = 17
 
