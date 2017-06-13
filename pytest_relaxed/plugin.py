@@ -1,4 +1,7 @@
+import pytest
+
 from .classes import SpecModule
+from .reporter import RelaxedReporter
 
 
 def pytest_collect_file(path, parent):
@@ -11,3 +14,16 @@ def pytest_collect_file(path, parent):
         # Then use our custom module class which performs modified
         # function/class selection as well as class recursion
         return SpecModule(path, parent)
+
+
+@pytest.mark.trylast # So we can be sure builtin terminalreporter exists
+def pytest_configure(config):
+    # TODO: we _may_ sometime want to do the isatty/slaveinput/etc checks that
+    # pytest-sugar does?
+    builtin = config.pluginmanager.getplugin('terminalreporter')
+    # Pass the configured, instantiated builtin terminal reporter to our
+    # instance so it can refer to e.g. the builtin reporter's configuration
+    ours = RelaxedReporter(builtin)
+    # Unregister the builtin first so only our output appears
+    config.pluginmanager.unregister(builtin)
+    config.pluginmanager.register(ours, 'terminalreporter')
