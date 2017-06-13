@@ -77,6 +77,8 @@ class TestNormalClasses:
                         pass
             """,
             other_behaviors="""
+                from pytest import skip
+
                 class OtherBehaviors:
                     def behavior_one(self):
                         skip()
@@ -111,16 +113,24 @@ class TestVerboseClasses:
                         pass
             """,
             other_behaviors="""
+                from pytest import skip
                 class OtherBehaviors:
                     def behavior_one(self):
                         pass
 
                     def behavior_two(self):
+                        skip()
+
+                    def behavior_three(self):
                         pass
+
+                    def behavior_four(self):
+                        assert False
             """,
         )
         # TODO: ansi codes
-        expected = """
+        output = testdir.runpytest('-v').stdout.str()
+        results = """
 Behaviors
 
     behavior_one
@@ -131,7 +141,12 @@ OtherBehaviors
     behavior_one
     behavior_two
 """.lstrip()
-        assert expected in testdir.runpytest('-v').stdout.str()
+        assert results in output
+        # Ensure we're not accidentally nixing failure, summary output
+        assert "== FAILURES ==" in output
+        assert "AssertionError" in output
+        # Summary
+        assert "== 1 failed, 4 passed, 1 skipped in " in output
 
     def test_nests_many_levels_deep_no_problem(self, testdir):
         testdir.makepyfile(
