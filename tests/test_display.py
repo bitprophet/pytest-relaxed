@@ -6,18 +6,24 @@ from pytest import skip
 # works?) CLI option (99% sure we can hook into that as a plugin)?
 
 
-class TestNormalFunctions:
+def _expect_regular_output(testdir):
+    output = testdir.runpytest().stdout.str()
+    results = """
+behaviors.py ..
+other_behaviors.py s.F.
+""".lstrip()
+    # Regular results w/ status letters
+    assert results in output
+    # Failure/traceback reporting
+    assert "== FAILURES ==" in output
+    assert "AssertionError" in output
+    # Summary
+    assert "== 1 failed, 4 passed, 1 skipped in " in output
+
+
+class TestRegularFunctions:
     """
     Function-oriented test modules, normal display mode.
-    """
-    def test_displays_tests_indented_under_module_header(self, testdir):
-        # TODO: at least, that seems like a reasonable thing to do offhand
-        skip()
-
-
-class TestVerboseFunctions:
-    """
-    Function-oriented test modules, verbose display mode.
     """
     def test_acts_just_like_normal_pytest(self, testdir):
         testdir.makepyfile(
@@ -29,15 +35,31 @@ class TestVerboseFunctions:
                     pass
             """,
             other_behaviors="""
+                from pytest import skip
+
                 def behavior_one():
-                    pass
+                    skip()
 
                 def behavior_two():
                     pass
+
+                def behavior_three():
+                    assert False
+
+                def behavior_four():
+                    pass
             """,
         )
-        expected = "behaviors.py ..\nother_behaviors.py .."
-        assert expected in testdir.runpytest().stdout.str()
+        _expect_regular_output(testdir)
+
+
+class TestVerboseFunctions:
+    """
+    Function-oriented test modules, verbose display mode.
+    """
+    def test_displays_tests_indented_under_module_header(self, testdir):
+        # TODO: at least, that seems like a reasonable thing to do offhand
+        skip()
 
 
 class TestNormalClasses:
@@ -57,14 +79,19 @@ class TestNormalClasses:
             other_behaviors="""
                 class OtherBehaviors:
                     def behavior_one(self):
-                        pass
+                        skip()
 
                     def behavior_two(self):
                         pass
+
+                    def behavior_three(self):
+                        assert False
+
+                    def behavior_four(self):
+                        pass
             """,
         )
-        expected = "behaviors.py ..\nother_behaviors.py .."
-        assert expected in testdir.runpytest().stdout.str()
+        _expect_regular_output(testdir)
 
 
 class TestVerboseClasses:
