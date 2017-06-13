@@ -180,6 +180,25 @@ that don't merit their own PyPI entries (most ported from ``spec``), such as:
   similar to the Nose testing tool of the same name.
 
 
+Nested output display
+=====================
+
+Continuing in the "port of ``spec`` / inspired by RSpec and friends" vein,
+``pytest-relaxed`` greatly enhances pytest's verbose display mode:
+
+- Tests are shown in a nested, tree-like fashion, with 'header' lines shown for
+  modules, classes (including nested classes) and so forth.
+- The per-test-result lines thus consist of just the test names, and are
+  colorized (similar to the built-in verbose mode) based on success/failure/skip.
+- Headers and test names are massaged to look more human-readable, such as
+  replacing underscores with spaces.
+
+*Unlike* ``spec``, this functionality doesn't affect normal/non-verbose output
+at all, and can be disabled entirely, allowing you to use the relaxed test
+discovery alongside normal pytest verbose display or your favorite pytest
+output plugins (such as ``pytest-sugar``.)
+
+
 Installation & use
 ==================
 
