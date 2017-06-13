@@ -49,10 +49,14 @@ class RelaxedReporter(TerminalReporter):
         # TODO: kinda want colors & per-module headers/indent though...
         if not self.verbosity:
             return TerminalReporter.pytest_runtest_logreport(self, report)
-        # Verbose: this is our best opportunity to display new output on a
-        # per-test basis (vs waiting until entire run is done.)
-        # First, do nothing if it's not reporting the main call (i.e. we don't
-        # want to display "the test" during its setup or teardown)
+
+        # First, the default impl of this method seems to take care of updating
+        # overall run stats; if we don't repeat that we lose all end-of-run
+        # tallying and whether the run failed...kind of important. (Why that's
+        # not a separate hook, no idea :()
+        self.update_stats(report)
+        # After that, short-circuit if it's not reporting the main call (i.e.
+        # we don't want to display "the test" during its setup or teardown)
         if report.when != 'call':
             return
         id_ = report.nodeid
@@ -61,7 +65,12 @@ class RelaxedReporter(TerminalReporter):
         # tracking indentation state.)
         self.ensure_headers(id_)
         # Then we can display the test name/status itself.
-        self.display_result(id_)
+        self.display_result(report)
+
+    def update_stats(self, report):
+        status_getter = self.config.hook.pytest_report_teststatus
+        cat, letter, word = status_getter(report=report)
+        self.stats.setdefault(cat, []).append(report)
 
     def split(self, id_):
         # Split on pytest's :: joiner, and strip out our intermediate
