@@ -89,10 +89,6 @@ class TestRelaxedMixin:
             "hello_I_am_a_test_method",
         ):
             assert substring in stdout
-        # TODO: if these or other 'assert x not in y' asserts fail, pytest is
-        # _not_ displaying the values of either the substring or the stdout,
-        # despite their website & demo claiming it will. Not sure what's
-        # broken.
         for substring in (
             "_help_me_understand",
             "_helper_method_hi",
