@@ -1,6 +1,7 @@
-import os
+from pytest import skip
 
-from pytest import skip, fixture
+# Load some fixtures we expose, without actually loading our entire plugin
+from pytest_relaxed.fixtures import environ
 
 
 # TODO: how best to make all of this opt-in/out? Reporter as separate plugin?
@@ -21,16 +22,6 @@ other_behaviors.py s.F.
     assert "AssertionError" in output
     # Summary
     assert "== 1 failed, 4 passed, 1 skipped in " in output
-
-
-@fixture
-def environ():
-    """
-    Enforce restoration of current shell environment after modifications.
-    """
-    current_environ = os.environ.copy()
-    yield os.environ
-    os.environ = current_environ
 
 
 class TestRegularFunctions:
