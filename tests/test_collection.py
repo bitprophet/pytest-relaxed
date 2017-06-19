@@ -279,7 +279,9 @@ class TestSpecInstance:
         """)
         assert testdir.runpytest().ret == 0
 
-    def test_module_contents_are_not_copied_into_top_level_classes(self, testdir):
+    def test_module_contents_are_not_copied_into_top_level_classes(
+        self, testdir
+    ):
         testdir.makepyfile("""
             module_constant = 17
 
