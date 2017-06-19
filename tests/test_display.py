@@ -256,6 +256,19 @@ Behaviors
 """.lstrip()
         assert expected in testdir.runpytest('-v').stdout.str()
 
+    def test_headers_and_tests_have_underscores_turn_to_spaces(self, testdir):
+        testdir.makepyfile(behaviors="""
+            class some_non_class_name_like_header:
+                def a_test_sentence(self):
+                    pass
+        """)
+        expected = """
+some non class name like header
+
+    a test sentence
+""".lstrip()
+        assert expected in testdir.runpytest('-v').stdout.str()
+
 
 class TestNormalMixed:
     """
