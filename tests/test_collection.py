@@ -1,3 +1,5 @@
+import re
+
 from pytest import skip # noqa
 
 
@@ -12,11 +14,11 @@ class Test_pytest_collect_file(object):
                 pass
         """)
         testdir.makefile('.txt', someotherfile="whatever")
-        stdout = testdir.runpytest("-v").stdout.str()
+        stdout = testdir.runpytest().stdout.str()
         # TODO: find it hard to believe pytest lacks strong "x in y" string
         # testing, but I cannot find any outside of fnmatch_lines (which is
         # specific to this testdir stuff, and also lacks an opposite...)
-        assert "somefile.py::hello_how_are_you" in stdout
+        assert "somefile.py" in stdout
         # This wouldn't actually even happen; we'd get an ImportError instead
         # as pytest tries importing 'someotherfile'. But eh.
         assert "whatever.txt" not in stdout
@@ -33,12 +35,12 @@ class Test_pytest_collect_file(object):
                 pass
         """)
         # TODO: why Result.str() and not str(Result)? Seems unPythonic
-        stdout = testdir.runpytest("-v").stdout.str()
-        assert "hastests.py::hello_how_are_you" in stdout
+        stdout = testdir.runpytest().stdout.str()
+        assert "hastests.py" in stdout
         assert "_util.py" not in stdout
 
     def test_does_not_consume_conftest_files(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(actual_tests="""
             def hello_how_are_you():
                 pass
         """)
@@ -46,8 +48,8 @@ class Test_pytest_collect_file(object):
             def this_does_nothing_useful():
                 pass
         """)
-        stdout = testdir.runpytest("-v").stdout.str()
-        assert "::hello_how_are_you" in stdout
+        stdout = testdir.runpytest().stdout.str()
+        assert "actual_tests.py" in stdout
         assert "conftest.py" not in stdout
 
 
@@ -84,16 +86,16 @@ class TestRelaxedMixin:
         """)
         stdout = testdir.runpytest("-v").stdout.str()
         for substring in (
-            "hello_how_are_you",
-            "please_test_me_thx",
-            "hello_I_am_a_test_method",
+            "hello how are you",
+            "please test me thx",
+            "hello I am a test method",
         ):
             assert substring in stdout
         for substring in (
-            "_help_me_understand",
-            "_helper_method_hi",
-            "_NotSureWhyYouWouldDoThisButWhatever",
-            "_ForSomeReasonIAmDefinedHereButAmNotATest",
+            "help me understand",
+            "helper method hi",
+            "NotSureWhyYouWouldDoThisButWhatever",
+            "ForSomeReasonIAmDefinedHereButAmNotATest",
         ):
             assert substring not in stdout
 
@@ -120,10 +122,13 @@ class TestRelaxedMixin:
                     pass
         """)
         stdout = testdir.runpytest("-v").stdout.str()
-        assert "::setup" not in stdout
-        assert "::teardown" not in stdout
-        assert "::actual_test" in stdout
-        assert "::actual_nested_test" in stdout
+        # These skipped. Gotta regex them because the test name includes the
+        # words 'setup' and 'teardown', heh.
+        assert not re.match(r'^setup$', stdout)
+        assert not re.match(r'^teardown$', stdout)
+        # Real tests not skipped
+        assert "actual test" in stdout
+        assert "actual nested test" in stdout
 
 
 class TestSpecModule:
@@ -155,10 +160,10 @@ class TestSpecModule:
                 pass
         """)
         stdout = testdir.runpytest("-v").stdout.str()
-        assert "::a_test" in stdout
-        assert "::helper" not in stdout
-        assert "::Helper" not in stdout
-        assert "::NewHelper" not in stdout
+        assert "a test" in stdout
+        assert "helper" not in stdout
+        assert "Helper" not in stdout
+        assert "NewHelper" not in stdout
 
     def test_does_not_warn_about_imported_names(self, testdir):
         # Trigger is something that appears callable but isn't a real function;
@@ -200,7 +205,16 @@ class TestSpecModule:
                             pass
         """)
         stdout = testdir.runpytest("-v").stdout.str()
-        assert "Outer::Middle::Inner::oh_look_an_actual_test" in stdout
+        expected = """
+Outer
+
+    Middle
+
+        Inner
+
+            oh look an actual test
+""".lstrip()
+        assert expected in stdout
 
 
 class TestSpecInstance:
