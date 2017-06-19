@@ -71,6 +71,9 @@ class RelaxedReporter(TerminalReporter):
         status_getter = self.config.hook.pytest_report_teststatus
         cat, letter, word = status_getter(report=report)
         self.stats.setdefault(cat, []).append(report)
+        # For use later; apparently some other plugins can yield display markup
+        # in the 'word' field of a report.
+        self.report_word = word
 
     def split(self, id_):
         # Split on pytest's :: joiner, and strip out our intermediate
@@ -95,18 +98,38 @@ class RelaxedReporter(TerminalReporter):
                 continue
             self.headers_displayed.append(header_path)
             indent = self.indent * i
-            # TODO: is raw print() correct here? What's the parent class do?
-            print("\n{}{}".format(indent, header))
+            self._tw.write("\n{}{}\n".format(indent, header))
             printed = True
         # No trailing blank line after all headers; only the 'last' one (i.e.
         # before any actual test names are printed). And only if at least one
         # header was actually printed! (Otherwise one gets newlines between all
         # tests.)
         if printed:
-            print("")
+            self._tw.write("\n")
 
-    def display_result(self, id_):
-        # TODO: just pass in what is needed from report
-        headers, leaf = self.split(id_)
+    def display_result(self, report):
+        headers, leaf = self.split(report.nodeid)
         indent = self.indent * len(headers)
-        print("{}{}".format(indent, leaf))
+        # This _tw.write() stuff seems to be how vanilla pytest writes its
+        # colorized verbose output. Bit clunky, but it means we automatically
+        # honor things like `--color=no` and whatnot.
+        self._tw.write(indent)
+        self._tw.write(leaf, **self.report_markup(report))
+        self._tw.write("\n")
+
+    def report_markup(self, report):
+        # Basically preserved from parent implementation; if something caused
+        # the 'word' field in the report to be a tuple, it's a (word, markup)
+        # tuple. We don't care about the word (possibly bad, but it doesn't fit
+        # with our display ethos right now) but the markup may be worth
+        # preserving.
+        if isinstance(self.report_word, tuple):
+            return self.report_word[1]
+        # Otherwise, assume ye olde pass/fail/skip.
+        if report.passed:
+            color = 'green'
+        elif report.failed:
+            color = 'red'
+        elif report.skipped:
+            color = 'yellow'
+        return {color: True}
