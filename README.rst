@@ -189,7 +189,8 @@ Continuing in the "port of ``spec`` / inspired by RSpec and friends" vein,
 - Tests are shown in a nested, tree-like fashion, with 'header' lines shown for
   modules, classes (including nested classes) and so forth.
 - The per-test-result lines thus consist of just the test names, and are
-  colorized (similar to the built-in verbose mode) based on success/failure/skip.
+  colorized (similar to the built-in verbose mode) based on
+  success/failure/skip.
 - Headers and test names are massaged to look more human-readable, such as
   replacing underscores with spaces.
 
