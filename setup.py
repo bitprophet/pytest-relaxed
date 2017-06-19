@@ -2,9 +2,17 @@
 
 from setuptools import setup, find_packages
 
+
+# Version info -- read without importing
+_locals = {}
+with open('pytest_relaxed/_version.py') as fp:
+    exec(fp.read(), None, _locals)
+version = _locals['__version__']
+
+
 setup(
     name='pytest-relaxed',
-    version='0.1.0',
+    version=version,
     description='Relaxed test discovery/organization for pytest',
     license='BSD',
 
