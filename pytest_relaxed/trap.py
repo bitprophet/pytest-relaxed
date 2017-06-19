@@ -8,6 +8,7 @@ Based on original code from Fabric 1.x, specifically:
 
 Though modifications have been made since.
 """
+
 import sys
 from functools import wraps
 
