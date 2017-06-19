@@ -110,6 +110,7 @@ class RelaxedReporter(TerminalReporter):
     def display_result(self, report):
         headers, leaf = self.split(report.nodeid)
         indent = self.indent * len(headers)
+        leaf = leaf.replace('_', ' ')
         # This _tw.write() stuff seems to be how vanilla pytest writes its
         # colorized verbose output. Bit clunky, but it means we automatically
         # honor things like `--color=no` and whatnot.
