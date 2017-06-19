@@ -142,15 +142,15 @@ class TestVerboseClasses:
         results = """
 Behaviors
 
-    behavior_one
-    behavior_two
+    behavior one
+    behavior two
 
 OtherBehaviors
 
-    behavior_one
-    behavior_two
-    behavior_three
-    behavior_four
+    behavior one
+    behavior two
+    behavior three
+    behavior four
 """.lstrip()
         assert results in output
         # Ensure we're not accidentally nixing failure, summary output
@@ -193,15 +193,15 @@ OtherBehaviors
         results = """
 Behaviors
 
-    \x1b[32mbehavior_one\x1b[0m
-    \x1b[32mbehavior_two\x1b[0m
+    \x1b[32mbehavior one\x1b[0m
+    \x1b[32mbehavior two\x1b[0m
 
 OtherBehaviors
 
-    \x1b[32mbehavior_one\x1b[0m
-    \x1b[33mbehavior_two\x1b[0m
-    \x1b[32mbehavior_three\x1b[0m
-    \x1b[31mbehavior_four\x1b[0m
+    \x1b[32mbehavior one\x1b[0m
+    \x1b[33mbehavior two\x1b[0m
+    \x1b[32mbehavior three\x1b[0m
+    \x1b[31mbehavior four\x1b[0m
 """.lstrip()
         assert results in output
         # Ensure we're not accidentally nixing failure, summary output
@@ -239,20 +239,20 @@ OtherBehaviors
         expected = """
 Behaviors
 
-    behavior_one
-    behavior_two
+    behavior one
+    behavior two
 
     MoreBehaviors
 
-        an_behavior
-        another_behavior
+        an behavior
+        another behavior
 
     YetMore
 
         Behaviors
 
             yup
-            still_works
+            still works
 """.lstrip()
         assert expected in testdir.runpytest('-v').stdout.str()
 
