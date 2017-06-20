@@ -11,5 +11,5 @@ def raises(exception):
         except exception:
             pass
         else:
-            raise Exception("Did not receive expected {}!".format(exception))
+            raise Exception("Did not receive expected {0}!".format(exception))
     return inner
