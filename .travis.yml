@@ -18,8 +18,13 @@ matrix:
     - python: pypy3
   fast_finish: true
 install:
-  # Install & task sanity test
+  # Install deps + self
   - pip install -r dev-requirements.txt
+  # Forcibly uninstall enum34 if on python 3.6; otherwise it can gum
+  # up things like the re module. (invocations' setup.py tries to do this for
+  # us, but wheels don't give a fuck.)
+  - "[[ $TRAVIS_PYTHON_VERSION == '3.6' ]] && pip uninstall enum34"
+  # Sanity test
   - inv --list
 script:
   # Run tests, generating coverage report (skipping html+open).
