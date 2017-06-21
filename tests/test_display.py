@@ -1,7 +1,7 @@
 from pytest import skip
 
 # Load some fixtures we expose, without actually loading our entire plugin
-from pytest_relaxed.fixtures import environ
+from pytest_relaxed.fixtures import environ # noqa
 
 
 # TODO: how best to make all of this opt-in/out? Reporter as separate plugin?
@@ -150,7 +150,7 @@ OtherBehaviors
         # Summary
         assert "== 1 failed, 4 passed, 1 skipped in " in output
 
-    def test_tests_are_colorized_by_test_result(self, testdir, environ):
+    def test_tests_are_colorized_by_test_result(self, testdir, environ): # noqa: F811
         # Make sure py._io.TerminalWriters write colors despite pytest output
         # capturing, which would otherwise trigger a 'False' result for "should
         # markup output".
