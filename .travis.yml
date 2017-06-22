@@ -23,7 +23,7 @@ install:
   # Forcibly uninstall enum34 if on python 3.6; otherwise it can gum
   # up things like the re module. (invocations' setup.py tries to do this for
   # us, but wheels don't give a fuck.)
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6']]; then pip uninstall -y enum34; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip uninstall -y enum34; fi"
   # Sanity test
   - inv --list
 script:
