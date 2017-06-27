@@ -39,6 +39,22 @@ class Test_pytest_collect_file(object):
         assert "hastests.py" in stdout
         assert "_util.py" not in stdout
 
+    def test_skips_underscored_directories(self, testdir):
+        testdir.makepyfile(hello="""
+            def hi_im_a_test():
+                pass
+""")
+        # NOTE: this appears to work due to impl details of pytester._makefile;
+        # namely that the kwarg keys are handed directly to tmpdir.join(),
+        # where tmpdir is a py.path.LocalPath.
+        testdir.makepyfile(**{'_nope/yallo': """
+            def hi_im_not_a_test():
+                pass
+"""})
+        stdout = testdir.runpytest("-v").stdout.str()
+        assert "hi im a test" in stdout
+        assert "hi im not a test" not in stdout
+
     def test_does_not_consume_conftest_files(self, testdir):
         testdir.makepyfile(actual_tests="""
             def hello_how_are_you():
