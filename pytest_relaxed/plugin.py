@@ -3,6 +3,11 @@ import pytest
 from .classes import SpecModule
 from .reporter import RelaxedReporter
 
+# NOTE: fixtures must be present in the module listed under our setup.py's
+# pytest11 entry_points value (i.e., this one.) Just being in the import path
+# (e.g. package __init__.py) was not sufficient!
+from .fixtures import environ
+
 
 def pytest_collect_file(path, parent):
     # Modify file selection to choose anything not private and not a conftest
