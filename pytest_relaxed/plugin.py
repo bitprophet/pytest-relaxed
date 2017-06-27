@@ -6,7 +6,7 @@ from .reporter import RelaxedReporter
 # NOTE: fixtures must be present in the module listed under our setup.py's
 # pytest11 entry_points value (i.e., this one.) Just being in the import path
 # (e.g. package __init__.py) was not sufficient!
-from .fixtures import environ
+from .fixtures import environ # noqa
 
 
 def pytest_ignore_collect(path, config):
