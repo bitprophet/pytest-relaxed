@@ -9,11 +9,17 @@ from .reporter import RelaxedReporter
 from .fixtures import environ
 
 
+def pytest_ignore_collect(path, config):
+    # Ignore files and/or directories marked as private via Python convention.
+    return path.basename.startswith('_')
+
+
 def pytest_collect_file(path, parent):
-    # Modify file selection to choose anything not private and not a conftest
+    # Modify file selection to choose all .py files besides conftest.py.
+    # (Skipping underscored names is handled up in pytest_ignore_collect, which
+    # applies to directories too.)
     if (
         path.ext == '.py' and
-        not path.basename.startswith('_') and
         path.basename != 'conftest.py'
     ):
         # Then use our custom module class which performs modified
