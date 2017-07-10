@@ -112,28 +112,36 @@ class SpecInstance(RelaxedMixin, Instance):
         ):
             return obj
         parent_obj = self.parent.parent.obj
-        # Obtain parent attributes not found on our obj (serves as both a
+        # Obtain parent attributes, etc not found on our obj (serves as both a
         # useful identifier of "stuff added to an outer class" and a way of
         # ensuring that we can override such attrs), and set them on obj
         delta = set(dir(parent_obj)).difference(set(dir(obj)))
         for name in delta:
             value = getattr(parent_obj, name)
-            # Skip past anything that looks like a test-type method or class.
-            # (Classes/methods which fail that test are presumably helper
-            # methods, which often _do_ want to be transmitted down the
-            # hierarchy. (TODO: we may want to recommend that those all be
-            # turned into fixtures?)
-            is_test_class = (
-                isinstance(value, six.class_types) and
-                istestclass(name)
-            )
-            is_test_function = (
-                isinstance(value, types.MethodType) and
-                istestfunction(name)
-            )
-            if is_test_class or is_test_function:
+            # Classes get skipped; they'd always just be other 'inner' classes
+            # that we don't want to copy elsewhere.
+            if isinstance(value, six.class_types):
                 continue
-            setattr(obj, name, value)
+            # Functions (methods) may get skipped, or not, depending:
+            if isinstance(value, types.MethodType):
+                # If they look like tests, they get skipped; don't want to copy
+                # tests around!
+                if istestfunction(name):
+                    continue
+                # Non-test == they're probably lifecycle methods
+                # (setup/teardown) or helpers (_do_thing). Rebind them to the
+                # target instance, otherwise the 'self' in the setup/helper is
+                # not the same 'self' as that in the actual test method it runs
+                # around or within!
+                # TODO: arguably, all setup or helper methods should become
+                # autouse class fixtures (see e.g. pytest docs under 'xunit
+                # setup on steroids')
+                func = six.get_method_function(value)
+                setattr(obj, name, six.create_bound_method(func, obj))
+            # Anything else should be some data-type attribute, which is copied
+            # verbatim / by-value.
+            else:
+                setattr(obj, name, value)
         return obj
 
     def makeitem(self, name, obj):

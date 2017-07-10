@@ -146,6 +146,25 @@ class TestRelaxedMixin:
         assert "actual test" in stdout
         assert "actual nested test" in stdout
 
+    def test_setup_given_inner_class_instances_when_inherited(self, testdir):
+        # NOTE: without this functionality in place, we still see setup()
+        # called on a per-test-method basis, but where 'self' is the outer
+        # class, not the inner class! so anything actually touching 'self'
+        # breaks.
+        # TODO: should this pattern change to be something like a pytest
+        # per-class autouse fixture method?
+        # (https://docs.pytest.org/en/latest/fixture.html#autouse-fixtures-xunit-setup-on-steroids)
+        testdir.makepyfile("""
+            class Outer:
+                def setup(self):
+                    self.some_attr = 17
+
+                class inner:
+                    def actual_nested_test(self):
+                        assert self.some_attr == 17
+        """)
+        assert testdir.runpytest().ret == 0
+
 
 class TestSpecModule:
     def test_skips_non_callable_items(self, testdir):
