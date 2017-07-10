@@ -155,7 +155,8 @@ like this::
 Notably:
 
 - The behavior is nested, infinitely, as you might expect;
-- Attributes that look like classes or methods themselves, are not copied;
+- Attributes that look like test classes or methods themselves, are not copied
+  (though others, i.e. ones named with a leading underscore, are);
 - Only attributes _not_ already present on the inner class are copied; thus
   inner classes may naturally "override" attributes, just as with class
   inheritance.

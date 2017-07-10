@@ -9,6 +9,18 @@ from pytest import Class, Instance, Module
 from _pytest.python import PyCollector
 
 
+# NOTE: these are defined here for reuse by both pytest's own machinery and our
+# internal bits.
+def istestclass(name):
+    return not name.startswith('_')
+
+def istestfunction(name):
+    return not (
+        name.startswith('_') or
+        name in ('setup', 'teardown')
+    )
+
+
 # All other classes in here currently inherit from PyCollector, and it is what
 # defines the default istestfunction/istestclass, so makes sense to inherit
 # from it for our mixin. (PyobjMixin, another commonly found class, offers
@@ -25,13 +37,10 @@ class RelaxedMixin(PyCollector):
     # SpecModule's override.
 
     def istestclass(self, obj, name):
-        return not name.startswith('_')
+        return istestclass(name)
 
     def istestfunction(self, obj, name):
-        return not (
-            name.startswith('_') or
-            name in ('setup', 'teardown')
-        )
+        return istestfunction(name)
 
 
 class SpecModule(RelaxedMixin, Module):
@@ -109,11 +118,20 @@ class SpecInstance(RelaxedMixin, Instance):
         delta = set(dir(parent_obj)).difference(set(dir(obj)))
         for name in delta:
             value = getattr(parent_obj, name)
-            # Skip past anything that looks like a method or class
-            if (
-                isinstance(value, six.class_types) or
-                isinstance(value, types.MethodType)
-            ):
+            # Skip past anything that looks like a test-type method or class.
+            # (Classes/methods which fail that test are presumably helper
+            # methods, which often _do_ want to be transmitted down the
+            # hierarchy. (TODO: we may want to recommend that those all be
+            # turned into fixtures?)
+            is_test_class = (
+                isinstance(value, six.class_types) and
+                istestclass(name)
+            )
+            is_test_function = (
+                isinstance(value, types.MethodType) and
+                istestfunction(name)
+            )
+            if is_test_class or is_test_function:
                 continue
             setattr(obj, name, value)
         return obj

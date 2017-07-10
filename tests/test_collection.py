@@ -293,7 +293,7 @@ class TestSpecInstance:
         """)
         assert testdir.runpytest().ret == 0
 
-    def test_methods_from_outer_classes_are_not_copied(self, testdir):
+    def test_normal_methods_from_outer_classes_are_not_copied(self, testdir):
         testdir.makepyfile("""
             class MyClass:
                 def outer_test(self):
@@ -302,6 +302,22 @@ class TestSpecInstance:
                 class Inner:
                     def inner_test(self):
                         assert not hasattr(self, 'outer_test')
+        """)
+        assert testdir.runpytest().ret == 0
+
+    def test_private_methods_from_outer_classes_are_copied(self, testdir):
+        testdir.makepyfile("""
+            class MyClass:
+                def outer_test(self):
+                    pass
+
+                def _outer_helper(self):
+                    pass
+
+                class Inner:
+                    def inner_test(self):
+                        assert not hasattr(self, 'outer_test')
+                        assert hasattr(self, '_outer_helper')
         """)
         assert testdir.runpytest().ret == 0
 
