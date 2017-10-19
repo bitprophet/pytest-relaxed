@@ -99,7 +99,7 @@ class RelaxedReporter(TerminalReporter):
             self.headers_displayed.append(header_path)
             indent = self.indent * i
             header = header.replace('_', ' ')
-            self._tw.write("\n{0}{1}\n".format(indent, header))
+            self._tw.write("\n{}{}\n".format(indent, header))
             printed = True
         # No trailing blank line after all headers; only the 'last' one (i.e.
         # before any actual test names are printed). And only if at least one
