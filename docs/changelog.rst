@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`1.0.0 <2017-11-06>`
 - :support:`-` Drop Python 2.6 and 3.3 support.
 - :feature:`-` Implement early drafts of Spec-like nested test display (which
   fires only when verbose output is enabled, unlike Spec which completely took
