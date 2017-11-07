@@ -1,0 +1,11 @@
+packaging:
+  sign: true
+  wheel: true
+  # TODO: this wants to really be 'related' to the docs settings somehow; used
+  # to use os.path.join() when it was in-python.
+  changelog_file: docs/changelog.rst
+run:
+  env:
+    # Our ANSI color tests test against hardcoded codes appropriate for
+    # this terminal, for now.
+    TERM: screen-256color

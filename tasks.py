@@ -44,12 +44,3 @@ ns = Collection(
     test,
     packaging=release,
 )
-ns.configure({
-    'run': {
-        'env': {
-            # Our ANSI color tests test against hardcoded codes appropriate for
-            # this terminal, for now.
-            'TERM': 'screen-256color',
-        },
-    },
-})
