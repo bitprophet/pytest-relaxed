@@ -1,6 +1,6 @@
 from invoke import task, Collection
 from invocations.packaging import release
-from invocations import pytest as pytests
+from invocations import docs, pytest as pytests
 
 
 @task
@@ -40,6 +40,7 @@ def test(c, verbose=True, color=True, capture='sys', opts=''):
 
 ns = Collection(
     coverage,
+    docs,
     test,
     packaging=release,
 )
