@@ -83,6 +83,12 @@ class RelaxedReporter(TerminalReporter):
         leaf = headers.pop()
         return headers, leaf
 
+    def transform_name(self, name):
+        """
+        Take a test class/module/function name and make it human-presentable.
+        """
+        return name.replace('_', ' ')
+
     def ensure_headers(self, id_):
         headers, _ = self.split(id_)
         printed = False
@@ -98,7 +104,7 @@ class RelaxedReporter(TerminalReporter):
                 continue
             self.headers_displayed.append(header_path)
             indent = self.indent * i
-            header = header.replace('_', ' ')
+            header = self.transform_name(header)
             self._tw.write("\n{}{}\n".format(indent, header))
             printed = True
         # No trailing blank line after all headers; only the 'last' one (i.e.
@@ -111,7 +117,7 @@ class RelaxedReporter(TerminalReporter):
     def display_result(self, report):
         headers, leaf = self.split(report.nodeid)
         indent = self.indent * len(headers)
-        leaf = leaf.replace('_', ' ')
+        leaf = self.transform_name(leaf)
         # This _tw.write() stuff seems to be how vanilla pytest writes its
         # colorized verbose output. Bit clunky, but it means we automatically
         # honor things like `--color=no` and whatnot.
