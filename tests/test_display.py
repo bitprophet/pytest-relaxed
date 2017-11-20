@@ -260,6 +260,21 @@ some non class name like header
 """.lstrip()
         assert expected in testdir.runpytest('-v').stdout.str()
 
+    def test_headers_and_tests_with_docstrings_use_docstrings(self, testdir):
+        testdir.makepyfile(docstrings="""
+            class a_class_with_a_docstring:
+                "CoolClass"
+                def a_test_with_a_docstring(self):
+                    "Docstrings are nice"
+                    pass
+        """)
+        expected = """
+CoolClass
+
+    Docstrings are nice
+""".lstrip()
+        assert expected in testdir.runpytest('-v').stdout.str()
+
 
 class TestNormalMixed:
     """

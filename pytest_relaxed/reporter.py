@@ -1,3 +1,4 @@
+import pytest
 from _pytest.terminal import TerminalReporter
 
 
@@ -40,10 +41,20 @@ class RelaxedReporter(TerminalReporter):
         # Verbose: do nothing, preventing normal display of test location/id.
         # Leaves all display up to other hooks.
 
+    @pytest.hookimpl(hookwrapper=True)
+    def pytest_runtest_makereport(self, item, call):
+        # Hook wrapper that attaches the item and call to the report,
+        # for reference within logreport().
+        # TODO: could potentially just rewrite our logreport() entirely within
+        # here? Feels less clean? It's hax either way...
+        outcome = yield
+        result = outcome.get_result()
+        result.item = item
+        result.call = call
+
     def pytest_runtest_logreport(self, report):
-        # TODO: if we _need_ access to the test item/node itself, we may want
-        # to implement pytest_runtest_makereport instead? (Feels a little
-        # 'off', but without other grody hax, no real way to get the obj so...)
+        # NOTE: our makereport() hookwrapper above ensures the report object
+        # exposes its source item+call; not a normal part of TestReport API.
 
         # Non-verbose: do whatever normal pytest does.
         # TODO: kinda want colors & per-module headers/indent though...
@@ -59,7 +70,14 @@ class RelaxedReporter(TerminalReporter):
         # we don't want to display "the test" during its setup or teardown)
         if report.when != 'call':
             return
+        # Get info from report: id string and actual object being examined
         id_ = report.nodeid
+        obj = report.item._obj
+        # TODO: above only lets us get the test itself; not any outer classes.
+        # TODO: implies we may want to update ensure_headers() to crawl the
+        # parent links after all, instead of using id+split()...?
+        # TODO: also it'd be nice to handle parameterized tests better somehow,
+        # at least removing the space before the '['. 
         # First, make sure we display non-per-test data, i.e.
         # module/class/nested class headers (which by necessity also includes
         # tracking indentation state.)
