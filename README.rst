@@ -6,7 +6,7 @@ pytest-relaxed
 
 It is the spiritual successor to https://pypi.python.org/pypi/spec, but is
 built for ``pytest`` instead of ``nosetests``, and rethinks some aspects of
-the design (such as a decreased emphasis on the display side of things.)
+the design (such as increased ability to opt-in to various behaviors.)
 
 
 Rationale
