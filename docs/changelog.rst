@@ -2,6 +2,11 @@
 Changelog
 =========
 
+- :feature:`-` Add support for collecting/displaying hybrid/legacy test suites
+  -- specifically, by getting out of pytest's way on collection of
+  ``test_named_files`` and stripping test prefixes/suffixes when displaying
+  tests in verbose mode. This makes it easier to take an existing test suite
+  and slowly port it to 'relaxed' style.
 - :release:`1.0.0 <2017-11-06>`
 - :support:`-` Drop Python 2.6 and 3.3 support.
 - :feature:`-` Implement early drafts of Spec-like nested test display (which
