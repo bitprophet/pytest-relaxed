@@ -64,6 +64,21 @@ class TestVerboseFunctions:
         # TODO: at least, that seems like a reasonable thing to do offhand
         skip()
 
+    def test_test_prefixes_are_stripped(self, testdir):
+        testdir.makepyfile(legacy="""
+            def test_some_things():
+                pass
+
+            def test_other_things():
+                pass
+        """)
+        expected = """
+some things
+other things
+""".lstrip()
+        output = testdir.runpytest_subprocess('-v').stdout.str()
+        assert expected in output
+
 
 class TestNormalClasses:
     """
@@ -257,6 +272,34 @@ Behaviors
 some non class name like header
 
     a test sentence
+""".lstrip()
+        assert expected in testdir.runpytest('-v').stdout.str()
+
+    def test_test_prefixes_are_stripped(self, testdir):
+        testdir.makepyfile(stripping="""
+            class TestSomeStuff:
+                def test_the_stuff(self):
+                    pass
+        """)
+        expected = """
+SomeStuff
+
+    the stuff
+
+""".lstrip()
+        assert expected in testdir.runpytest('-v').stdout.str()
+
+    def test_test_suffixes_are_stripped(self, testdir):
+        testdir.makepyfile(stripping="""
+            class StuffTest:
+                def test_yup(self):
+                    pass
+        """)
+        expected = """
+Stuff
+
+    yup
+
 """.lstrip()
         assert expected in testdir.runpytest('-v').stdout.str()
 

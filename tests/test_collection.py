@@ -1,6 +1,6 @@
 import re
 
-from pytest import skip # noqa
+import pytest
 
 
 # For 'testdir' fixture, mostly
@@ -250,6 +250,36 @@ Outer
             oh look an actual test method
 """.lstrip()
         assert expected in stdout
+
+    def test_does_not_collect_test_prefixed_files(self, testdir):
+        # Incidentally also tests display stripping; the display test suite has
+        # explicit tests for that too tho.
+        testdir.makepyfile(test_something="""
+            import unittest
+
+            class TestMyStuff(unittest.TestCase):
+                def test_things(self):
+                    pass
+        """)
+        stdout = testdir.runpytest("-v").stdout.str()
+        expected = """
+MyStuff
+
+    things
+
+""".lstrip()
+        assert expected in stdout
+        # Make sure no warnings were emitted; much of the time, our collection
+        # bits will cause nasty warnings if they end up consuming unittest
+        # stuff or otherwise doubling up on already-collected objects.
+        assert "warnings summary" not in stdout
+
+    @pytest.mark.skip
+    def test_correctly_handles_marked_test_cases(self, testdir):
+        # I.e. @pytest.mark.someflag objects at the class level...figure out
+        # how real collectors handle these exactly? the "actual" test class we
+        # normally care about is inside of it.
+        pass
 
 
 class TestSpecInstance:
