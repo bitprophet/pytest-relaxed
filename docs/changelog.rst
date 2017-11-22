@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`1.1.0 <2017-11-21>`
 - :feature:`-` Add support for collecting/displaying hybrid/legacy test suites
   -- specifically, by getting out of pytest's way on collection of
   ``test_named_files`` and stripping test prefixes/suffixes when displaying
