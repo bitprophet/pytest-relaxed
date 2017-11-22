@@ -77,6 +77,31 @@ avoid fouling up common test extensions:
 - Objects decorated as fixtures with ``@pytest.fixture`` are, of course,
   also skipped.
 
+Backwards compatibility
+-----------------------
+
+If you like the idea of pytest-relaxed but have a large test suite, it may be
+daunting to think about "upgrading" it all in one go. It's relatively simple to
+arrive at a 'hybrid' test suite where your legacy tests still run normally (as
+long as they're already pytest-compatible, which is true for most unittest
+suites) but 'relaxed' style tests also work as expected.
+
+- The only change you'll still have to make is renaming 'helper' files (any
+  whose name doesn't start with ``test_``) so their names begin with an
+  underscore; then, of course, search and replace any imports of such files.
+- ``pytest-relaxed`` explicitly sidesteps around anything that looks like
+  "classic" test files (i.e. named ``test_*``), allowing pytest's native
+  collection to take effect. Such files should not need any alteration.
+- Our reporter (display) functionality still works pretty well with legacy
+  style tests; test prefixes and suffixes are stripped at display time, so
+  ``TestMyThing.test_something`` still shows up as if it was written in relaxed
+  style: ``MyThing`` w/ nested ``something``.
+
+    - However, because we don't *collect* such tests, nesting and other
+      features we offer won't work until you've renamed the files to not start
+      with ``test_``, and changed any classes to not inherit from
+      ``unittest.TestCase`` or similar.
+
 
 Nested class organization
 =========================
