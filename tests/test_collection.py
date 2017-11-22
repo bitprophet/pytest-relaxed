@@ -41,19 +41,19 @@ class Test_pytest_collect_file(object):
 
     def test_skips_underscored_directories(self, testdir):
         testdir.makepyfile(hello="""
-            def hi_im_a_test():
+            def hi_im_a_test_function():
                 pass
 """)
         # NOTE: this appears to work due to impl details of pytester._makefile;
         # namely that the kwarg keys are handed directly to tmpdir.join(),
         # where tmpdir is a py.path.LocalPath.
         testdir.makepyfile(**{'_nope/yallo': """
-            def hi_im_not_a_test():
+            def hi_im_not_a_test_function():
                 pass
 """})
         stdout = testdir.runpytest("-v").stdout.str()
-        assert "hi im a test" in stdout
-        assert "hi im not a test" not in stdout
+        assert "hi im a test function" in stdout
+        assert "hi im not a test function" not in stdout
 
     def test_does_not_consume_conftest_files(self, testdir):
         testdir.makepyfile(actual_tests="""
@@ -71,7 +71,7 @@ class Test_pytest_collect_file(object):
 
 class TestRelaxedMixin:
     def test_selects_all_non_underscored_members(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             def hello_how_are_you():
                 pass
 
@@ -117,14 +117,14 @@ class TestRelaxedMixin:
 
     def test_skips_setup_and_teardown(self, testdir):
         # TODO: probably other special names we're still missing?
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             def setup():
                 pass
 
             def teardown():
                 pass
 
-            def actual_test():
+            def actual_test_here():
                 pass
 
             class Outer:
@@ -134,7 +134,7 @@ class TestRelaxedMixin:
                 def teardown(self):
                     pass
 
-                def actual_nested_test(self):
+                def actual_nested_test_here(self):
                     pass
         """)
         stdout = testdir.runpytest("-v").stdout.str()
@@ -143,8 +143,8 @@ class TestRelaxedMixin:
         assert not re.match(r'^setup$', stdout)
         assert not re.match(r'^teardown$', stdout)
         # Real tests not skipped
-        assert "actual test" in stdout
-        assert "actual nested test" in stdout
+        assert "actual test here" in stdout
+        assert "actual nested test here" in stdout
 
     def test_setup_given_inner_class_instances_when_inherited(self, testdir):
         # NOTE: without this functionality in place, we still see setup()
@@ -154,7 +154,7 @@ class TestRelaxedMixin:
         # TODO: should this pattern change to be something like a pytest
         # per-class autouse fixture method?
         # (https://docs.pytest.org/en/latest/fixture.html#autouse-fixtures-xunit-setup-on-steroids)
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class Outer:
                 def setup(self):
                     self.some_attr = 17
@@ -168,7 +168,7 @@ class TestRelaxedMixin:
 
 class TestSpecModule:
     def test_skips_non_callable_items(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             some_uncallable = 17
 
             def some_callable():
@@ -188,14 +188,14 @@ class TestSpecModule:
             class NewHelper(object):
                 pass
         """)
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             from _util import helper, Helper, NewHelper
 
-            def a_test():
+            def a_test_is_me():
                 pass
         """)
         stdout = testdir.runpytest("-v").stdout.str()
-        assert "a test" in stdout
+        assert "a test is me" in stdout
         assert "helper" not in stdout
         assert "Helper" not in stdout
         assert "NewHelper" not in stdout
@@ -217,7 +217,7 @@ class TestSpecModule:
                 def __init__(self):
                     pass
         """)
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             from _util import helper, HelperClass
 
             def a_test():
@@ -232,11 +232,11 @@ class TestSpecModule:
             assert warning not in stdout
 
     def test_replaces_class_tests_with_custom_recursing_classes(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class Outer:
                 class Middle:
                     class Inner:
-                        def oh_look_an_actual_test(self):
+                        def oh_look_an_actual_test_method(self):
                             pass
         """)
         stdout = testdir.runpytest("-v").stdout.str()
@@ -247,7 +247,7 @@ Outer
 
         Inner
 
-            oh look an actual test
+            oh look an actual test method
 """.lstrip()
         assert expected in stdout
 
@@ -257,7 +257,7 @@ class TestSpecInstance:
         # Mostly a sanity test; pytest seems to get out of the way enough that
         # the test is truly a bound method & the 'self' is truly an instance of
         # the class.
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class MyClass:
                 an_attr = 5
 
@@ -274,7 +274,7 @@ class TestSpecInstance:
         # TODO: really starting to think going back to 'real' fixture files
         # makes more sense; this is all real python code and is eval'd as such,
         # but it is only editable and viewable as a string. No highlighting.
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class MyClass:
                 an_attr = 5
 
@@ -286,7 +286,7 @@ class TestSpecInstance:
         assert testdir.runpytest().ret == 0
 
     def test_nesting_is_infinite(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class MyClass:
                 an_attr = 5
 
@@ -300,7 +300,7 @@ class TestSpecInstance:
         assert testdir.runpytest().ret == 0
 
     def test_overriding_works_naturally(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class MyClass:
                 an_attr = 5
 
@@ -313,7 +313,7 @@ class TestSpecInstance:
         assert testdir.runpytest().ret == 0
 
     def test_normal_methods_from_outer_classes_are_not_copied(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class MyClass:
                 def outer_test(self):
                     pass
@@ -325,7 +325,7 @@ class TestSpecInstance:
         assert testdir.runpytest().ret == 0
 
     def test_private_methods_from_outer_classes_are_copied(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             class MyClass:
                 def outer_test(self):
                     pass
@@ -343,7 +343,7 @@ class TestSpecInstance:
     def test_module_contents_are_not_copied_into_top_level_classes(
         self, testdir
     ):
-        testdir.makepyfile("""
+        testdir.makepyfile(foo="""
             module_constant = 17
 
             class MyClass:
