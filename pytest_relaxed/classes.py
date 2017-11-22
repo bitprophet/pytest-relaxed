@@ -75,8 +75,13 @@ class SpecModule(RelaxedMixin, Module):
             # TODO: this may be way more than is necessary; possible we can
             # recurse & unpack here, as long as we preserve parent/child
             # relationships correctly?
+            # NOTE: we could explicitly skip unittest objects here (we'd want
+            # them to be handled by pytest's own unittest support) but since
+            # those are almost always in test_prefixed_filenames anyways...meh
             if isinstance(item, Class):
                 item = SpecClass(item.name, item.parent)
+            # TODO: pytest.mark objects (i.e. @pytest.mark.something applied to
+            # an entire testcase class) may need special treatment here
             # Collect regardless of whether we replaced the item
             collected.append(item)
         return collected

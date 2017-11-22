@@ -1,3 +1,5 @@
+import re
+
 from _pytest.terminal import TerminalReporter
 
 
@@ -16,6 +18,10 @@ from _pytest.terminal import TerminalReporter
 #   per-report basis. Meh. (guess if we NEEDED to access attributes of a parent
 #   in a child, that'd be possible, but...seems unlikely-ish? Maybe indent
 #   based on parent relationships instead of across-the-run state tracking?)
+
+
+TEST_PREFIX = re.compile(r'^(Test|test_)')
+TEST_SUFFIX = re.compile(r'(Test|_test)$')
 
 
 # NOTE: much of the high level "replace default output bits" approach is
@@ -87,7 +93,13 @@ class RelaxedReporter(TerminalReporter):
         """
         Take a test class/module/function name and make it human-presentable.
         """
-        return name.replace('_', ' ')
+        # TestPrefixes / test_prefixes -> stripped
+        name = re.sub(TEST_PREFIX, '', name)
+        # TestSuffixes / suffixed_test -> stripped
+        name = re.sub(TEST_SUFFIX, '', name)
+        # All underscores become spaces, for sentence-ishness
+        name = name.replace('_', ' ')
+        return name
 
     def ensure_headers(self, id_):
         headers, _ = self.split(id_)

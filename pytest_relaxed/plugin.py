@@ -20,7 +20,11 @@ def pytest_collect_file(path, parent):
     # applies to directories too.)
     if (
         path.ext == '.py' and
-        path.basename != 'conftest.py'
+        path.basename != 'conftest.py' and
+        # Also skip anything prefixed with test_; pytest's own native
+        # collection will get that stuff, and we don't _want_ to try modifying
+        # such files anyways.
+        not path.basename.startswith('test_')
     ):
         # Then use our custom module class which performs modified
         # function/class selection as well as class recursion
