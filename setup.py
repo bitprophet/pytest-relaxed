@@ -28,10 +28,8 @@ setup(
     },
 
     install_requires=[
-        # TODO: is it worth tightening/loosening this? At the moment I don't
-        # know of any specific pytest releases/bugs/features that limit me
-        # besides presumable major version API compat concerns.
-        'pytest>=3,<4',
+        # NOTE: pytest 3.3 broke something, not sure what yet
+        'pytest>=3,<3.3',
         # TODO: ditto; six is so widely used it's prob worth having a broad pin
         'six>=1,<2',
         # TODO: ditto again!
