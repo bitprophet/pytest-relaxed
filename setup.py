@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
-
+from io import open
 
 # Version info -- read without importing
 _locals = {}
@@ -19,7 +19,7 @@ setup(
     url="https://github.com/bitprophet/pytest-relaxed",
     author='Jeff Forcier',
     author_email='jeff@bitprophet.org',
-    long_description="\n" + open('README.rst').read(),
+    long_description="\n" + open('README.rst', encoding='utf-8').read(),
 
     packages=find_packages(),
     entry_points={
