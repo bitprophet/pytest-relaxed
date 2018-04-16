@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`1.1.2 <2018-04-16>`
 - :bug:`-` Neglected to update setup metadata when setting up a tiny Read The
   Docs instance. Homepage link now fixed!
 - :release:`1.1.1 <2018-04-16>`
