@@ -2,6 +2,12 @@
 Changelog
 =========
 
+- :bug:`-` Neglected to update setup metadata when setting up a tiny Read The
+  Docs instance. Homepage link now fixed!
+- :bug:`-` Installation and other ``setup.py`` activities implicitly assumed
+  native Unicode support due to naively opening ``README.rst``. ``setup.py`` now
+  explicitly opens that file with a ``utf-8`` encoding argument. Thanks to
+  Ondřej Súkup for catch & patch.
 - :release:`1.0.0 <2017-11-06>`
 - :support:`-` Drop Python 2.6 and 3.3 support.
 - :feature:`-` Implement early drafts of Spec-like nested test display (which

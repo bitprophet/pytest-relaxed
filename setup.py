@@ -16,7 +16,7 @@ setup(
     description='Relaxed test discovery/organization for pytest',
     license='BSD',
 
-    url="https://github.com/bitprophet/pytest-relaxed",
+    url="https://pytest-relaxed.readthedocs.io/",
     author='Jeff Forcier',
     author_email='jeff@bitprophet.org',
     long_description="\n" + open('README.rst', encoding='utf-8').read(),
