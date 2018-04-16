@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`1.1.1 <2018-04-16>`
 - :bug:`-` Installation and other ``setup.py`` activities implicitly assumed
   native Unicode support due to naively opening ``README.rst``. ``setup.py`` now
   explicitly opens that file with a ``utf-8`` encoding argument. Thanks to
