@@ -2,6 +2,10 @@
 Changelog
 =========
 
+- :bug:`-` Installation and other ``setup.py`` activities implicitly assumed
+  native Unicode support due to naively opening ``README.rst``. ``setup.py`` now
+  explicitly opens that file with a ``utf-8`` encoding argument. Thanks to
+  Ondřej Súkup for catch & patch.
 - :bug:`-` Bypass ``pytestmark`` objects and attributes during our custom
   collection phase; we don't need to process them ourselves, pytest is already
   picking up the original top level copies, and having them percolate into
