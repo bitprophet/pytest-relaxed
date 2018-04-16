@@ -80,9 +80,6 @@ class SpecModule(RelaxedMixin, Module):
             # those are almost always in test_prefixed_filenames anyways...meh
             if isinstance(item, Class):
                 item = SpecClass(item.name, item.parent)
-            # TODO: pytest.mark objects (i.e. @pytest.mark.something applied to
-            # an entire testcase class) may need special treatment here
-            # Collect regardless of whether we replaced the item
             collected.append(item)
         return collected
 
@@ -123,6 +120,11 @@ class SpecInstance(RelaxedMixin, Instance):
         delta = set(dir(parent_obj)).difference(set(dir(obj)))
         for name in delta:
             value = getattr(parent_obj, name)
+            # Pytest's pytestmark attributes always get skipped, we don't want
+            # to spread that around where it's not wanted. (Besides, it can
+            # cause a lot of collection level warnings.)
+            if name == 'pytestmark':
+                continue
             # Classes get skipped; they'd always just be other 'inner' classes
             # that we don't want to copy elsewhere.
             if isinstance(value, six.class_types):
@@ -150,6 +152,9 @@ class SpecInstance(RelaxedMixin, Instance):
         return obj
 
     def makeitem(self, name, obj):
+        # More pytestmark skipping.
+        if name == 'pytestmark':
+            return
         # NOTE: no need to modify collect() this time, just mutate item
         # creation.
         # TODO: can't we redo SpecClass the same way? And SpecModule??
