@@ -2,6 +2,10 @@
 Changelog
 =========
 
+- :bug:`-` Bypass ``pytestmark`` objects and attributes during our custom
+  collection phase; we don't need to process them ourselves, pytest is already
+  picking up the original top level copies, and having them percolate into
+  nested classes was causing loud pytest collection-step warnings.
 - :release:`1.1.0 <2017-11-21>`
 - :feature:`-` Add support for collecting/displaying hybrid/legacy test suites
   -- specifically, by getting out of pytest's way on collection of
