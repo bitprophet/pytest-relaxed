@@ -2,6 +2,8 @@
 Changelog
 =========
 
+- :bug:`-` Neglected to update setup metadata when setting up a tiny Read The
+  Docs instance. Homepage link now fixed!
 - :release:`1.1.1 <2018-04-16>`
 - :bug:`-` Installation and other ``setup.py`` activities implicitly assumed
   native Unicode support due to naively opening ``README.rst``. ``setup.py`` now
