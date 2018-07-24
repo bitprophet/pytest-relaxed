@@ -1,6 +1,7 @@
 from invoke import task, Collection
+from invocations.checks import blacken
 from invocations.packaging import release
-from invocations import docs, pytest as pytests
+from invocations import docs, pytest as pytests, travis
 
 
 @task
@@ -39,8 +40,10 @@ def test(c, verbose=True, color=True, capture='sys', opts=''):
 
 
 ns = Collection(
+    blacken,
     coverage,
     docs,
     test,
+    travis,
     packaging=release,
 )
