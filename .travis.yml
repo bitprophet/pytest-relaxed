@@ -25,6 +25,10 @@ install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip uninstall -y enum34; fi"
   # Sanity test
   - inv --list
+before_script:
+  # Blacken and flake8 before running any tests, it's a faster fail
+  - inv travis.blacken
+  - flake8
 script:
   # Run tests, generating coverage report (skipping html+open).
   - inv coverage --no-html
@@ -34,8 +38,6 @@ script:
   # Run our own tests again as our sanity test; don't see another way of asking
   # pytest to print its plugin list (as with fixtures/markers) :(
   - "pytest | grep 'plugins: relaxed'"
-  # I have this in my git pre-push hook, but contributors probably don't
-  - flake8
 after_success:
   # Upload coverage data to codecov
   - codecov
