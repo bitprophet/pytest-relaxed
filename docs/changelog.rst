@@ -2,6 +2,9 @@
 Changelog
 =========
 
+- :bug:`-` Fix the ``@raises`` helper decorator so it actually raises an
+  exception when the requested exception is not raised by the decorated
+  function. That's definitely not a confusing sentence.
 - :release:`1.1.2 <2018-04-16>`
 - :bug:`-` Neglected to update setup metadata when setting up a tiny Read The
   Docs instance. Homepage link now fixed!
