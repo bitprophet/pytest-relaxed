@@ -22,7 +22,7 @@ class CarbonCopy(IO):
     """
     # NOTE: because StringIO.StringIO on Python 2 is an old-style class we
     # cannot use super() :(
-    def __init__(self, buffer=b'', cc=None):
+    def __init__(self, buffer=b"", cc=None):
         """
         If ``cc`` is given and is a file-like object or an iterable of same,
         it/they will be written to whenever this instance is written to.
@@ -30,7 +30,7 @@ class CarbonCopy(IO):
         IO.__init__(self, buffer)
         if cc is None:
             cc = []
-        elif hasattr(cc, 'write'):
+        elif hasattr(cc, "write"):
             cc = [cc]
         self.cc = cc
 
@@ -38,7 +38,7 @@ class CarbonCopy(IO):
         # Ensure we always write bytes. This means that wrapped code calling
         # print(<a string object>) in Python 3 will still work. Sigh.
         if isinstance(s, six.text_type):
-            s = s.encode('utf-8')
+            s = s.encode("utf-8")
         # Write out to our capturing object & any CC's
         IO.write(self, s)
         for writer in self.cc:
@@ -54,7 +54,7 @@ class CarbonCopy(IO):
     def getvalue(self):
         ret = IO.getvalue(self)
         if isinstance(ret, six.binary_type):
-            ret = ret.decode('utf-8')
+            ret = ret.decode("utf-8")
         return ret
 
 
@@ -66,6 +66,7 @@ def trap(func):
     ``sys.stdall``. This stream will resemble what a user sees at a terminal,
     i.e. both out/err streams intermingled.
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         # Use another CarbonCopy even though we're not cc'ing; for our "write
@@ -79,4 +80,5 @@ def trap(func):
             sys.stdout = my_stdout
             sys.stderr = my_stderr
             del sys.stdall
+
     return wrapper

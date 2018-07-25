@@ -36,14 +36,9 @@ def test(c, verbose=True, color=True, capture="sys", opts="", x=False, k=None):
     # our own plugin, but given pytest's options around plugin setup, this
     # seems to be both easier and simpler.
     opts += " -p no:relaxed"
-    pytests.test(c, verbose=verbose, color=color, capture=capture, opts=opts, x=x, k=k)
+    pytests.test(
+        c, verbose=verbose, color=color, capture=capture, opts=opts, x=x, k=k
+    )
 
 
-ns = Collection(
-    blacken,
-    coverage,
-    docs,
-    test,
-    travis,
-    packaging=release,
-)
+ns = Collection(blacken, coverage, docs, test, travis, packaging=release)

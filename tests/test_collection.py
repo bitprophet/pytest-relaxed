@@ -1,19 +1,22 @@
 import re
 
-from pytest import skip # noqa
+from pytest import skip  # noqa
 
 
 # For 'testdir' fixture, mostly
-pytest_plugins = 'pytester'
+pytest_plugins = "pytester"
 
 
 class Test_pytest_collect_file(object):
+
     def test_only_loads_dot_py_files(self, testdir):
-        testdir.makepyfile(somefile="""
+        testdir.makepyfile(
+            somefile="""
             def hello_how_are_you():
                 pass
-        """)
-        testdir.makefile('.txt', someotherfile="whatever")
+        """
+        )
+        testdir.makefile(".txt", someotherfile="whatever")
         stdout = testdir.runpytest().stdout.str()
         # TODO: find it hard to believe pytest lacks strong "x in y" string
         # testing, but I cannot find any outside of fnmatch_lines (which is
@@ -24,54 +27,70 @@ class Test_pytest_collect_file(object):
         assert "whatever.txt" not in stdout
 
     def test_skips_underscored_files(self, testdir):
-        testdir.makepyfile(hastests="""
+        testdir.makepyfile(
+            hastests="""
             from _util import helper
 
             def hello_how_are_you():
                 helper()
-        """)
-        testdir.makepyfile(_util="""
+        """
+        )
+        testdir.makepyfile(
+            _util="""
             def helper():
                 pass
-        """)
+        """
+        )
         # TODO: why Result.str() and not str(Result)? Seems unPythonic
         stdout = testdir.runpytest().stdout.str()
         assert "hastests.py" in stdout
         assert "_util.py" not in stdout
 
     def test_skips_underscored_directories(self, testdir):
-        testdir.makepyfile(hello="""
+        testdir.makepyfile(
+            hello="""
             def hi_im_a_test():
                 pass
-""")
+"""
+        )
         # NOTE: this appears to work due to impl details of pytester._makefile;
         # namely that the kwarg keys are handed directly to tmpdir.join(),
         # where tmpdir is a py.path.LocalPath.
-        testdir.makepyfile(**{'_nope/yallo': """
+        testdir.makepyfile(
+            **{
+                "_nope/yallo": """
             def hi_im_not_a_test():
                 pass
-"""})
+"""
+            }
+        )
         stdout = testdir.runpytest("-v").stdout.str()
         assert "hi im a test" in stdout
         assert "hi im not a test" not in stdout
 
     def test_does_not_consume_conftest_files(self, testdir):
-        testdir.makepyfile(actual_tests="""
+        testdir.makepyfile(
+            actual_tests="""
             def hello_how_are_you():
                 pass
-        """)
-        testdir.makepyfile(conftest="""
+        """
+        )
+        testdir.makepyfile(
+            conftest="""
             def this_does_nothing_useful():
                 pass
-        """)
+        """
+        )
         stdout = testdir.runpytest().stdout.str()
         assert "actual_tests.py" in stdout
         assert "conftest.py" not in stdout
 
 
 class TestRelaxedMixin:
+
     def test_selects_all_non_underscored_members(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             def hello_how_are_you():
                 pass
 
@@ -99,7 +118,8 @@ class TestRelaxedMixin:
             class _ForSomeReasonIAmDefinedHereButAmNotATest:
                 def usually_you_would_just_import_this_but_okay(self):
                     pass
-        """)
+        """
+        )
         stdout = testdir.runpytest("-v").stdout.str()
         for substring in (
             "hello how are you",
@@ -117,7 +137,8 @@ class TestRelaxedMixin:
 
     def test_skips_setup_and_teardown(self, testdir):
         # TODO: probably other special names we're still missing?
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             def setup():
                 pass
 
@@ -136,12 +157,13 @@ class TestRelaxedMixin:
 
                 def actual_nested_test(self):
                     pass
-        """)
+        """
+        )
         stdout = testdir.runpytest("-v").stdout.str()
         # These skipped. Gotta regex them because the test name includes the
         # words 'setup' and 'teardown', heh.
-        assert not re.match(r'^setup$', stdout)
-        assert not re.match(r'^teardown$', stdout)
+        assert not re.match(r"^setup$", stdout)
+        assert not re.match(r"^teardown$", stdout)
         # Real tests not skipped
         assert "actual test" in stdout
         assert "actual nested test" in stdout
@@ -154,7 +176,8 @@ class TestRelaxedMixin:
         # TODO: should this pattern change to be something like a pytest
         # per-class autouse fixture method?
         # (https://docs.pytest.org/en/latest/fixture.html#autouse-fixtures-xunit-setup-on-steroids)
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class Outer:
                 def setup(self):
                     self.some_attr = 17
@@ -162,23 +185,28 @@ class TestRelaxedMixin:
                 class inner:
                     def actual_nested_test(self):
                         assert self.some_attr == 17
-        """)
+        """
+        )
         assert testdir.runpytest().ret == 0
 
 
 class TestSpecModule:
+
     def test_skips_non_callable_items(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             some_uncallable = 17
 
             def some_callable():
                 pass
-        """)
+        """
+        )
         stdout = testdir.runpytest("-v").stdout.str()
         assert "some_uncallable" not in stdout
 
     def test_skips_imported_objects(self, testdir):
-        testdir.makepyfile(_util="""
+        testdir.makepyfile(
+            _util="""
             def helper():
                 pass
 
@@ -187,13 +215,16 @@ class TestSpecModule:
 
             class NewHelper(object):
                 pass
-        """)
-        testdir.makepyfile("""
+        """
+        )
+        testdir.makepyfile(
+            """
             from _util import helper, Helper, NewHelper
 
             def a_test():
                 pass
-        """)
+        """
+        )
         stdout = testdir.runpytest("-v").stdout.str()
         assert "a test" in stdout
         assert "helper" not in stdout
@@ -206,7 +237,8 @@ class TestSpecModule:
         # things like invoke/fabric Task objects.)
         # Can also be triggered if our collection is buggy and does not
         # explicitly reject imported classes (i.e. if we only reject funcs).
-        testdir.makepyfile(_util="""
+        testdir.makepyfile(
+            _util="""
             class Callable(object):
                 def __call__(self):
                     pass
@@ -216,13 +248,16 @@ class TestSpecModule:
             class HelperClass:
                 def __init__(self):
                     pass
-        """)
-        testdir.makepyfile("""
+        """
+        )
+        testdir.makepyfile(
+            """
             from _util import helper, HelperClass
 
             def a_test():
                 pass
-        """)
+        """
+        )
         stdout = testdir.runpytest("-sv").stdout.str()
         # TODO: more flexible test in case text changes? eh.
         for warning in (
@@ -232,15 +267,18 @@ class TestSpecModule:
             assert warning not in stdout
 
     def test_replaces_class_tests_with_custom_recursing_classes(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class Outer:
                 class Middle:
                     class Inner:
                         def oh_look_an_actual_test(self):
                             pass
-        """)
+        """
+        )
         stdout = testdir.runpytest("-v").stdout.str()
-        expected = """
+        expected = (
+            """
 Outer
 
     Middle
@@ -249,22 +287,26 @@ Outer
 
             oh look an actual test
 """.lstrip()
+        )
         assert expected in stdout
 
 
 class TestSpecInstance:
+
     def test_methods_self_objects_exhibit_class_attributes(self, testdir):
         # Mostly a sanity test; pytest seems to get out of the way enough that
         # the test is truly a bound method & the 'self' is truly an instance of
         # the class.
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class MyClass:
                 an_attr = 5
 
                 def some_test(self):
                     assert hasattr(self, 'an_attr')
                     assert self.an_attr == 5
-        """)
+        """
+        )
         # TODO: first thought was "why is this not automatic?", then realized
         # "duh, it'd be annoying if you wanted to test failure related behavior
         # a lot"...but still want some slightly nicer helper I think
@@ -274,7 +316,8 @@ class TestSpecInstance:
         # TODO: really starting to think going back to 'real' fixture files
         # makes more sense; this is all real python code and is eval'd as such,
         # but it is only editable and viewable as a string. No highlighting.
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class MyClass:
                 an_attr = 5
 
@@ -282,11 +325,13 @@ class TestSpecInstance:
                     def inner_test(self):
                         assert hasattr(self, 'an_attr')
                         assert self.an_attr == 5
-        """)
+        """
+        )
         assert testdir.runpytest().ret == 0
 
     def test_nesting_is_infinite(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class MyClass:
                 an_attr = 5
 
@@ -296,11 +341,13 @@ class TestSpecInstance:
                             def innermost_test(self):
                                 assert hasattr(self, 'an_attr')
                                 assert self.an_attr == 5
-        """)
+        """
+        )
         assert testdir.runpytest().ret == 0
 
     def test_overriding_works_naturally(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class MyClass:
                 an_attr = 5
 
@@ -309,11 +356,13 @@ class TestSpecInstance:
 
                     def inner_test(self):
                         assert self.an_attr == 7
-        """)
+        """
+        )
         assert testdir.runpytest().ret == 0
 
     def test_normal_methods_from_outer_classes_are_not_copied(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class MyClass:
                 def outer_test(self):
                     pass
@@ -321,11 +370,13 @@ class TestSpecInstance:
                 class Inner:
                     def inner_test(self):
                         assert not hasattr(self, 'outer_test')
-        """)
+        """
+        )
         assert testdir.runpytest().ret == 0
 
     def test_private_methods_from_outer_classes_are_copied(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             class MyClass:
                 def outer_test(self):
                     pass
@@ -337,17 +388,20 @@ class TestSpecInstance:
                     def inner_test(self):
                         assert not hasattr(self, 'outer_test')
                         assert hasattr(self, '_outer_helper')
-        """)
+        """
+        )
         assert testdir.runpytest().ret == 0
 
     def test_module_contents_are_not_copied_into_top_level_classes(
         self, testdir
     ):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             module_constant = 17
 
             class MyClass:
                 def outer_test(self):
                     assert not hasattr(self, 'module_constant')
-        """)
+        """
+        )
         assert testdir.runpytest().ret == 0
