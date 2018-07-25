@@ -2,6 +2,8 @@
 Changelog
 =========
 
+- :support:`- backported` Add missing universal wheel indicator in setup
+  metadata.
 - :release:`1.0.1 <2018-07-24>`
 - :bug:`-` Fix the ``@raises`` helper decorator so it actually raises an
   exception when the requested exception is not raised by the decorated
