@@ -26,7 +26,7 @@ def coverage(c, html=True):
 # TODO: good candidate for builtin-to-invoke "just wrap <other task> with a
 # tiny bit of behavior", and/or args/kwargs style invocations
 @task
-def test(c, verbose=True, color=True, capture='sys', opts=''):
+def test(c, verbose=True, color=True, capture="sys", opts=""):
     """
     Run pytest with given options.
 
@@ -39,11 +39,4 @@ def test(c, verbose=True, color=True, capture='sys', opts=''):
     pytests.test(c, verbose=verbose, color=color, capture=capture, opts=opts)
 
 
-ns = Collection(
-    blacken,
-    coverage,
-    docs,
-    test,
-    travis,
-    packaging=release,
-)
+ns = Collection(blacken, coverage, docs, test, travis, packaging=release)

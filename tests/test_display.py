@@ -1,7 +1,7 @@
 from pytest import skip
 
 # Load some fixtures we expose, without actually loading our entire plugin
-from pytest_relaxed.fixtures import environ # noqa
+from pytest_relaxed.fixtures import environ  # noqa
 
 
 # TODO: how best to make all of this opt-in/out? Reporter as separate plugin?
@@ -11,10 +11,12 @@ from pytest_relaxed.fixtures import environ # noqa
 
 def _expect_regular_output(testdir):
     output = testdir.runpytest().stdout.str()
-    results = """
+    results = (
+        """
 behaviors.py ..
 other_behaviors.py s.F.
 """.lstrip()
+    )
     # Regular results w/ status letters
     assert results in output
     # Failure/traceback reporting
@@ -28,6 +30,7 @@ class TestRegularFunctions:
     """
     Function-oriented test modules, normal display mode.
     """
+
     def test_acts_just_like_normal_pytest(self, testdir):
         testdir.makepyfile(
             behaviors="""
@@ -60,23 +63,28 @@ class TestVerboseFunctions:
     """
     Function-oriented test modules, verbose display mode.
     """
+
     def test_displays_tests_indented_under_module_header(self, testdir):
         # TODO: at least, that seems like a reasonable thing to do offhand
         skip()
 
     def test_test_prefixes_are_stripped(self, testdir):
-        testdir.makepyfile(legacy="""
+        testdir.makepyfile(
+            legacy="""
             def test_some_things():
                 pass
 
             def test_other_things():
                 pass
-        """)
-        expected = """
+        """
+        )
+        expected = (
+            """
 some things
 other things
 """.lstrip()
-        output = testdir.runpytest_subprocess('-v').stdout.str()
+        )
+        output = testdir.runpytest_subprocess("-v").stdout.str()
         assert expected in output
 
 
@@ -84,6 +92,7 @@ class TestNormalClasses:
     """
     Class-oriented test modules, normal display mode.
     """
+
     def acts_just_like_normal_pytest(self, testdir):
         testdir.makepyfile(
             behaviors="""
@@ -118,6 +127,7 @@ class TestVerboseClasses:
     """
     Class-oriented test modules, verbose display mode.
     """
+
     def test_shows_tests_nested_under_classes_without_files(self, testdir):
         testdir.makepyfile(
             behaviors="""
@@ -144,8 +154,9 @@ class TestVerboseClasses:
                         assert False
             """,
         )
-        output = testdir.runpytest_subprocess('-v').stdout.str()
-        results = """
+        output = testdir.runpytest_subprocess("-v").stdout.str()
+        results = (
+            """
 Behaviors
 
     behavior one
@@ -158,6 +169,7 @@ OtherBehaviors
     behavior three
     behavior four
 """.lstrip()
+        )
         assert results in output
         # Ensure we're not accidentally nixing failure, summary output
         assert "== FAILURES ==" in output
@@ -165,11 +177,13 @@ OtherBehaviors
         # Summary
         assert "== 1 failed, 4 passed, 1 skipped in " in output
 
-    def test_tests_are_colorized_by_test_result(self, testdir, environ): # noqa: F811,E501
+    def test_tests_are_colorized_by_test_result(  # noqa: F811,E501
+        self, testdir, environ
+    ):
         # Make sure py._io.TerminalWriters write colors despite pytest output
         # capturing, which would otherwise trigger a 'False' result for "should
         # markup output".
-        environ['PY_COLORS'] = '1'
+        environ["PY_COLORS"] = "1"
         testdir.makepyfile(
             behaviors="""
                 class Behaviors:
@@ -195,8 +209,9 @@ OtherBehaviors
                         assert False
             """,
         )
-        output = testdir.runpytest_subprocess('-v').stdout.str()
-        results = """
+        output = testdir.runpytest_subprocess("-v").stdout.str()
+        results = (
+            """
 Behaviors
 
     \x1b[32mbehavior one\x1b[0m
@@ -209,6 +224,7 @@ OtherBehaviors
     \x1b[32mbehavior three\x1b[0m
     \x1b[31mbehavior four\x1b[0m
 """.lstrip()
+        )
         assert results in output
         # Ensure we're not accidentally nixing failure, summary output
         assert "== FAILURES ==" in output
@@ -240,9 +256,10 @@ OtherBehaviors
 
                             def still_works(self):
                                 pass
-            """,
+            """
         )
-        expected = """
+        expected = (
+            """
 Behaviors
 
     behavior one
@@ -260,48 +277,61 @@ Behaviors
             yup
             still works
 """.lstrip()
-        assert expected in testdir.runpytest('-v').stdout.str()
+        )
+        assert expected in testdir.runpytest("-v").stdout.str()
 
     def test_headers_and_tests_have_underscores_turn_to_spaces(self, testdir):
-        testdir.makepyfile(behaviors="""
+        testdir.makepyfile(
+            behaviors="""
             class some_non_class_name_like_header:
                 def a_test_sentence(self):
                     pass
-        """)
-        expected = """
+        """
+        )
+        expected = (
+            """
 some non class name like header
 
     a test sentence
 """.lstrip()
-        assert expected in testdir.runpytest('-v').stdout.str()
+        )
+        assert expected in testdir.runpytest("-v").stdout.str()
 
     def test_test_prefixes_are_stripped(self, testdir):
-        testdir.makepyfile(stripping="""
+        testdir.makepyfile(
+            stripping="""
             class TestSomeStuff:
                 def test_the_stuff(self):
                     pass
-        """)
-        expected = """
+        """
+        )
+        expected = (
+            """
 SomeStuff
 
     the stuff
 
 """.lstrip()
-        assert expected in testdir.runpytest('-v').stdout.str()
+        )
+        assert expected in testdir.runpytest("-v").stdout.str()
 
     def test_test_suffixes_are_stripped(self, testdir):
-        testdir.makepyfile(stripping="""
+        testdir.makepyfile(
+            stripping="""
             class StuffTest:
                 def test_yup(self):
                     pass
-        """)
-        expected = """
+        """
+        )
+        expected = (
+            """
 Stuff
 
     yup
 
 """.lstrip()
-        assert expected in testdir.runpytest('-v').stdout.str()
+        )
+        assert expected in testdir.runpytest("-v").stdout.str()
 
 
 class TestNormalMixed:

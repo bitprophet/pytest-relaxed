@@ -20,13 +20,14 @@ from _pytest.terminal import TerminalReporter
 #   based on parent relationships instead of across-the-run state tracking?)
 
 
-TEST_PREFIX = re.compile(r'^(Test|test_)')
-TEST_SUFFIX = re.compile(r'(Test|_test)$')
+TEST_PREFIX = re.compile(r"^(Test|test_)")
+TEST_SUFFIX = re.compile(r"(Test|_test)$")
 
 
 # NOTE: much of the high level "replace default output bits" approach is
 # cribbed directly from pytest-sugar at 0.8.0
 class RelaxedReporter(TerminalReporter):
+
     def __init__(self, builtin):
         # Pass in the builtin reporter's config so we're not redoing all of its
         # initial setup/cli parsing/etc. NOTE: TerminalReporter is old-style :(
@@ -35,13 +36,13 @@ class RelaxedReporter(TerminalReporter):
         # TODO: faster data structure probably wise
         self.headers_displayed = []
         # Size of indents. TODO: configuration
-        self.indent = ' ' * 4
+        self.indent = " " * 4
 
     def pytest_runtest_logstart(self, nodeid, location):
         # Non-verbose: do whatever normal pytest does.
         if not self.verbosity:
             return TerminalReporter.pytest_runtest_logstart(
-                self, nodeid, location,
+                self, nodeid, location
             )
         # Verbose: do nothing, preventing normal display of test location/id.
         # Leaves all display up to other hooks.
@@ -63,7 +64,7 @@ class RelaxedReporter(TerminalReporter):
         self.update_stats(report)
         # After that, short-circuit if it's not reporting the main call (i.e.
         # we don't want to display "the test" during its setup or teardown)
-        if report.when != 'call':
+        if report.when != "call":
             return
         id_ = report.nodeid
         # First, make sure we display non-per-test data, i.e.
@@ -84,7 +85,7 @@ class RelaxedReporter(TerminalReporter):
     def split(self, id_):
         # Split on pytest's :: joiner, and strip out our intermediate
         # SpecInstance objects (appear as '()')
-        headers = [x for x in id_.split('::')[1:] if x != '()']
+        headers = [x for x in id_.split("::")[1:] if x != "()"]
         # Last one is the actual test being reported on, not a header
         leaf = headers.pop()
         return headers, leaf
@@ -94,11 +95,11 @@ class RelaxedReporter(TerminalReporter):
         Take a test class/module/function name and make it human-presentable.
         """
         # TestPrefixes / test_prefixes -> stripped
-        name = re.sub(TEST_PREFIX, '', name)
+        name = re.sub(TEST_PREFIX, "", name)
         # TestSuffixes / suffixed_test -> stripped
-        name = re.sub(TEST_SUFFIX, '', name)
+        name = re.sub(TEST_SUFFIX, "", name)
         # All underscores become spaces, for sentence-ishness
-        name = name.replace('_', ' ')
+        name = name.replace("_", " ")
         return name
 
     def ensure_headers(self, id_):
@@ -111,7 +112,7 @@ class RelaxedReporter(TerminalReporter):
             # Need to semi-uniq headers by their 'path'. (This is a lot like
             # "the test id minus the last segment" but since we have to
             # split/join either way...whatever. I like dots.)
-            header_path = '.'.join(headers[:i + 1])
+            header_path = ".".join(headers[: i + 1])
             if header_path in self.headers_displayed:
                 continue
             self.headers_displayed.append(header_path)
@@ -147,9 +148,9 @@ class RelaxedReporter(TerminalReporter):
             return self.report_word[1]
         # Otherwise, assume ye olde pass/fail/skip.
         if report.passed:
-            color = 'green'
+            color = "green"
         elif report.failed:
-            color = 'red'
+            color = "red"
         elif report.skipped:
-            color = 'yellow'
+            color = "yellow"
         return {color: True}

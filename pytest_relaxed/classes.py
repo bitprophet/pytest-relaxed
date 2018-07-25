@@ -4,6 +4,7 @@ import types
 import six
 
 from pytest import Class, Instance, Module
+
 # NOTE: don't see any other way to get access to pytest innards besides using
 # the underscored name :(
 from _pytest.python import PyCollector
@@ -12,13 +13,11 @@ from _pytest.python import PyCollector
 # NOTE: these are defined here for reuse by both pytest's own machinery and our
 # internal bits.
 def istestclass(name):
-    return not name.startswith('_')
+    return not name.startswith("_")
+
 
 def istestfunction(name):
-    return not (
-        name.startswith('_') or
-        name in ('setup', 'teardown')
-    )
+    return not (name.startswith("_") or name in ("setup", "teardown"))
 
 
 # All other classes in here currently inherit from PyCollector, and it is what
@@ -44,6 +43,7 @@ class RelaxedMixin(PyCollector):
 
 
 class SpecModule(RelaxedMixin, Module):
+
     def _is_test_obj(self, test_func, obj, name):
         # First run our super() test, which should be RelaxedMixin's.
         good_name = getattr(super(SpecModule, self), test_func)(obj, name)
@@ -59,10 +59,10 @@ class SpecModule(RelaxedMixin, Module):
         return True
 
     def istestfunction(self, obj, name):
-        return self._is_test_obj('istestfunction', obj, name)
+        return self._is_test_obj("istestfunction", obj, name)
 
     def istestclass(self, obj, name):
-        return self._is_test_obj('istestclass', obj, name)
+        return self._is_test_obj("istestclass", obj, name)
 
     def collect(self):
         # Get whatever our parent picked up as valid test items (given our
@@ -87,6 +87,7 @@ class SpecModule(RelaxedMixin, Module):
 # NOTE: no need to inherit from RelaxedMixin here as it doesn't do much by
 # its lonesome
 class SpecClass(Class):
+
     def collect(self):
         items = super(SpecClass, self).collect()
         collected = []
@@ -100,6 +101,7 @@ class SpecClass(Class):
 
 
 class SpecInstance(RelaxedMixin, Instance):
+
     def _getobj(self):
         # Regular object-making first
         obj = super(SpecInstance, self)._getobj()
@@ -108,9 +110,9 @@ class SpecInstance(RelaxedMixin, Instance):
         # NOTE: need parent.parent due to instance->class hierarchy
         # NOTE: of course, skipping if we've gone out the top into a module etc
         if (
-            not hasattr(self, 'parent') or
-            not hasattr(self.parent, 'parent') or
-            not isinstance(self.parent.parent, SpecInstance)
+            not hasattr(self, "parent")
+            or not hasattr(self.parent, "parent")
+            or not isinstance(self.parent.parent, SpecInstance)
         ):
             return obj
         parent_obj = self.parent.parent.obj
@@ -123,7 +125,7 @@ class SpecInstance(RelaxedMixin, Instance):
             # Pytest's pytestmark attributes always get skipped, we don't want
             # to spread that around where it's not wanted. (Besides, it can
             # cause a lot of collection level warnings.)
-            if name == 'pytestmark':
+            if name == "pytestmark":
                 continue
             # Classes get skipped; they'd always just be other 'inner' classes
             # that we don't want to copy elsewhere.
@@ -153,7 +155,7 @@ class SpecInstance(RelaxedMixin, Instance):
 
     def makeitem(self, name, obj):
         # More pytestmark skipping.
-        if name == 'pytestmark':
+        if name == "pytestmark":
             return
         # NOTE: no need to modify collect() this time, just mutate item
         # creation.
