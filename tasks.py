@@ -42,3 +42,4 @@ def test(c, verbose=True, color=True, capture="sys", opts="", x=False, k=None):
 
 
 ns = Collection(blacken, coverage, docs, test, travis, packaging=release)
+ns.configure({"blacken": {"find_opts": "-and -not -path './build*'"}})
