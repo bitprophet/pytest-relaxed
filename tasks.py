@@ -57,5 +57,5 @@ def test(
     )
 
 
-ns = Collection(blacken, coverage, docs, test, travis, packaging=release)
+ns = Collection(blacken, coverage, docs, test, travis, release)
 ns.configure({"blacken": {"find_opts": "-and -not -path './build*'"}})
