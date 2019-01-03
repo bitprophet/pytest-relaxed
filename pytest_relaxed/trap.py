@@ -20,6 +20,7 @@ class CarbonCopy(IO):
     """
     An IO wrapper capable of multiplexing its writes to other buffer objects.
     """
+
     # NOTE: because StringIO.StringIO on Python 2 is an old-style class we
     # cannot use super() :(
     def __init__(self, buffer=b"", cc=None):

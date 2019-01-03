@@ -4,7 +4,6 @@ from decorator import decorator
 # Thought pytest.raises was like nose.raises, but nooooooo. So let's make it
 # like that.
 def raises(klass):
-
     @decorator
     def inner(f, *args, **kwargs):
         try:
