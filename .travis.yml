@@ -7,6 +7,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7-dev"
   - "pypy"
   - "pypy3"
 matrix:
@@ -19,10 +20,10 @@ matrix:
 install:
   # Install deps + self
   - pip install -r dev-requirements.txt
-  # Forcibly uninstall enum34 if on python 3.6; otherwise it can gum
+  # Forcibly uninstall enum34 if on python 3.6+; otherwise it can gum
   # up things like the re module. (invocations' setup.py tries to do this for
   # us, but wheels don't give a fuck.)
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip uninstall -y enum34; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == 3.[67] ]]; then pip uninstall -y enum34; fi"
   # Sanity test
   - inv --list
 before_script:
