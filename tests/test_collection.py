@@ -8,6 +8,7 @@ pytest_plugins = "pytester"
 
 
 class Test_pytest_collect_file(object):
+
     def test_only_loads_dot_py_files(self, testdir):
         testdir.makepyfile(
             somefile="""
@@ -86,6 +87,7 @@ class Test_pytest_collect_file(object):
 
 
 class TestRelaxedMixin:
+
     def test_selects_all_non_underscored_members(self, testdir):
         testdir.makepyfile(
             foo="""
@@ -189,6 +191,7 @@ class TestRelaxedMixin:
 
 
 class TestSpecModule:
+
     def test_skips_non_callable_items(self, testdir):
         testdir.makepyfile(
             foo="""
@@ -274,7 +277,8 @@ class TestSpecModule:
         """
         )
         stdout = testdir.runpytest("-v").stdout.str()
-        expected = """
+        expected = (
+            """
 Outer
 
     Middle
@@ -283,6 +287,7 @@ Outer
 
             oh look an actual test method
 """.lstrip()
+        )
         assert expected in stdout
 
     def test_does_not_collect_test_prefixed_files(self, testdir):
@@ -298,12 +303,14 @@ Outer
         """
         )
         stdout = testdir.runpytest("-v").stdout.str()
-        expected = """
+        expected = (
+            """
 MyStuff
 
     things
 
 """.lstrip()
+        )
         assert expected in stdout
         # Make sure no warnings were emitted; much of the time, our collection
         # bits will cause nasty warnings if they end up consuming unittest
@@ -319,6 +326,7 @@ MyStuff
 
 
 class TestSpecInstance:
+
     def test_methods_self_objects_exhibit_class_attributes(self, testdir):
         # Mostly a sanity test; pytest seems to get out of the way enough that
         # the test is truly a bound method & the 'self' is truly an instance of

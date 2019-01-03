@@ -11,10 +11,12 @@ from pytest_relaxed.fixtures import environ  # noqa
 
 def _expect_regular_output(testdir):
     output = testdir.runpytest().stdout.str()
-    results = """
+    results = (
+        """
 behaviors.py ..
 other_behaviors.py s.F.
 """.lstrip()
+    )
     # Regular results w/ status letters
     assert results in output
     # Failure/traceback reporting
@@ -76,10 +78,12 @@ class TestVerboseFunctions:
                 pass
         """
         )
-        expected = """
+        expected = (
+            """
 some things
 other things
 """.lstrip()
+        )
         output = testdir.runpytest_subprocess("-v").stdout.str()
         assert expected in output
 
@@ -151,7 +155,8 @@ class TestVerboseClasses:
             """,
         )
         output = testdir.runpytest_subprocess("-v").stdout.str()
-        results = """
+        results = (
+            """
 Behaviors
 
     behavior one
@@ -164,6 +169,7 @@ OtherBehaviors
     behavior three
     behavior four
 """.lstrip()
+        )
         assert results in output
         # Ensure we're not accidentally nixing failure, summary output
         assert "== FAILURES ==" in output
@@ -204,7 +210,8 @@ OtherBehaviors
             """,
         )
         output = testdir.runpytest_subprocess("-v").stdout.str()
-        results = """
+        results = (
+            """
 Behaviors
 
     \x1b[32mbehavior one\x1b[0m
@@ -217,6 +224,7 @@ OtherBehaviors
     \x1b[32mbehavior three\x1b[0m
     \x1b[31mbehavior four\x1b[0m
 """.lstrip()
+        )
         assert results in output
         # Ensure we're not accidentally nixing failure, summary output
         assert "== FAILURES ==" in output
@@ -250,7 +258,8 @@ OtherBehaviors
                                 pass
             """
         )
-        expected = """
+        expected = (
+            """
 Behaviors
 
     behavior one
@@ -268,6 +277,7 @@ Behaviors
             yup
             still works
 """.lstrip()
+        )
         assert expected in testdir.runpytest("-v").stdout.str()
 
     def test_headers_and_tests_have_underscores_turn_to_spaces(self, testdir):
@@ -278,11 +288,13 @@ Behaviors
                     pass
         """
         )
-        expected = """
+        expected = (
+            """
 some non class name like header
 
     a test sentence
 """.lstrip()
+        )
         assert expected in testdir.runpytest("-v").stdout.str()
 
     def test_test_prefixes_are_stripped(self, testdir):
@@ -293,12 +305,14 @@ some non class name like header
                     pass
         """
         )
-        expected = """
+        expected = (
+            """
 SomeStuff
 
     the stuff
 
 """.lstrip()
+        )
         assert expected in testdir.runpytest("-v").stdout.str()
 
     def test_test_suffixes_are_stripped(self, testdir):
@@ -309,12 +323,14 @@ SomeStuff
                     pass
         """
         )
-        expected = """
+        expected = (
+            """
 Stuff
 
     yup
 
 """.lstrip()
+        )
         assert expected in testdir.runpytest("-v").stdout.str()
 
 

@@ -44,6 +44,7 @@ class RelaxedMixin(PyCollector):
 
 
 class SpecModule(RelaxedMixin, Module):
+
     def _is_test_obj(self, test_func, obj, name):
         # First run our super() test, which should be RelaxedMixin's.
         good_name = getattr(super(SpecModule, self), test_func)(obj, name)
@@ -87,6 +88,7 @@ class SpecModule(RelaxedMixin, Module):
 # NOTE: no need to inherit from RelaxedMixin here as it doesn't do much by
 # its lonesome
 class SpecClass(Class):
+
     def collect(self):
         items = super(SpecClass, self).collect()
         collected = []
@@ -100,6 +102,7 @@ class SpecClass(Class):
 
 
 class SpecInstance(RelaxedMixin, Instance):
+
     def _getobj(self):
         # Regular object-making first
         obj = super(SpecInstance, self)._getobj()
