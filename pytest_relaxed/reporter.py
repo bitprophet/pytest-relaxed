@@ -76,7 +76,7 @@ class RelaxedReporter(TerminalReporter):
 
     def update_stats(self, report):
         cat, letter, word = self.config.hook.pytest_report_teststatus(
-            report=report, config=self.config,
+            report=report, config=self.config
         )
         self.stats.setdefault(cat, []).append(report)
         # For use later; apparently some other plugins can yield display markup
