@@ -12,11 +12,24 @@ python:
   - "pypy"
   - "pypy3"
 matrix:
+  # Spot check against pre-pytest-3.3 since that barrier broke us (see issue
+  # #2), this will prove that we aren't regressing against older pytest
+  # (choosing 3.0 as that's our lower bound).
+  include:
+    - python: 2.7
+      env: "OLDEST_PYTEST=3.0"
+    - python: 3.7
+      env: "OLDEST_PYTEST=3.0"
   # pypy3 (as of 2.4.0) has a wacky arity issue in its source loader. Allow it
   # to fail until we can test on, and require, PyPy3.3+. See invoke#358.
   allow_failures:
     - python: pypy3
 install:
+  # Grab oldest-supported pytest version if this cell wanted it
+  - |
+    if [[ -n "$OLDEST_PYTEST" ]]; then
+      pip install "pytest==${OLDEST_PYTEST}"
+    fi
   # Install deps + self
   - pip install -r dev-requirements.txt
   # Forcibly uninstall enum34 if on python 3.6+; otherwise it can gum
