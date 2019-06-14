@@ -11,14 +11,9 @@ from pytest_relaxed.fixtures import environ  # noqa
 
 def _expect_regular_output(testdir):
     output = testdir.runpytest().stdout.str()
-    results = (
-        """
-behaviors.py ..
-other_behaviors.py s.F.
-""".lstrip()
-    )
     # Regular results w/ status letters
-    assert results in output
+    assert "behaviors.py .." in output
+    assert "other_behaviors.py s.F." in output
     # Failure/traceback reporting
     assert "== FAILURES ==" in output
     assert "AssertionError" in output
