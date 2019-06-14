@@ -75,8 +75,9 @@ class RelaxedReporter(TerminalReporter):
         self.display_result(report)
 
     def update_stats(self, report):
-        status_getter = self.config.hook.pytest_report_teststatus
-        cat, letter, word = status_getter(report=report)
+        cat, letter, word = self.config.hook.pytest_report_teststatus(
+            report=report, config=self.config,
+        )
         self.stats.setdefault(cat, []).append(report)
         # For use later; apparently some other plugins can yield display markup
         # in the 'word' field of a report.
