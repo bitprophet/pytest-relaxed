@@ -16,11 +16,16 @@ matrix:
   # Spot check against pre-pytest-3.3 since that barrier broke us (see issue
   # #2), this will prove that we aren't regressing against older pytest
   # (choosing 3.0.x as that's our lower bound; sadly actual 3.0.0 is buggy).
+  # In addition, choose some >3.3, <4.0 version since it goes to 4 now.
   include:
     - python: 2.7
       env: "OLDEST_PYTEST=3.0.7"
+    - python: 2.7
+      env: MIDDLE_AGED_PYTEST=3.10.1
     - python: 3.7
       env: "OLDEST_PYTEST=3.0.7"
+    - python: 3.7
+      env: MIDDLE_AGED_PYTEST=3.10.1
   # pypy3 (as of 2.4.0) has a wacky arity issue in its source loader. Allow it
   # to fail until we can test on, and require, PyPy3.3+. See invoke#358.
   allow_failures:
