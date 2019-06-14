@@ -163,7 +163,8 @@ class SpecInstance(RelaxedMixin, Instance):
         if name == "pytestmark":
             return
         # NOTE: no need to modify collect() this time, just mutate item
-        # creation.
+        # creation. TODO: but if collect() is still public, let's move to that
+        # sometime, if that'll work as well.
         superb = super(SpecInstance, self)
         attr = "_makeitem" if hasattr(superb, "_makeitem") else "makeitem"
         item = getattr(superb, attr)(name, obj)
