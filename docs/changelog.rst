@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :bug:`2` Fix compatibility with pytest versions 3.3 and above.
 - :release:`1.1.4 <2018-07-24>`
 - :release:`1.0.2 <2018-07-24>`
 - :support:`- backported` Add missing universal wheel indicator in setup
