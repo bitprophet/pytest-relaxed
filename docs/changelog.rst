@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`1.1.5 <2019-06-14>`
 - :bug:`2` Fix compatibility with pytest versions 3.3 and above.
 - :release:`1.1.4 <2018-07-24>`
 - :release:`1.0.2 <2018-07-24>`
