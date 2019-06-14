@@ -9,6 +9,7 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
+  - "3.8-dev"
   - "pypy"
   - "pypy3"
 matrix:
@@ -24,6 +25,7 @@ matrix:
   # to fail until we can test on, and require, PyPy3.3+. See invoke#358.
   allow_failures:
     - python: pypy3
+    - python: 3.8-dev
 install:
   # Grab oldest-supported pytest version if this cell wanted it
   - |
@@ -35,7 +37,8 @@ install:
   # Forcibly uninstall enum34 if on python 3.6+; otherwise it can gum
   # up things like the re module. (invocations' setup.py tries to do this for
   # us, but wheels don't give a fuck.)
-  - "if [[ $TRAVIS_PYTHON_VERSION == 3.[67]* ]]; then pip uninstall -y enum34; fi"
+  # # TODO: this required still??
+  - "if [[ $TRAVIS_PYTHON_VERSION == 3.[6-8]* ]]; then pip uninstall -y enum34; fi"
   # Sanity test
   - inv --list
 before_script:
