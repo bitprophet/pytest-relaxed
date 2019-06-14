@@ -154,14 +154,19 @@ class SpecInstance(RelaxedMixin, Instance):
                 setattr(obj, name, value)
         return obj
 
+    # Stub for pytest >=3.0,<3.3 where _makeitem did not exist
+    def makeitem(self, *args, **kwargs):
+        return self._makeitem(*args, **kwargs)
+
     def _makeitem(self, name, obj):
         # More pytestmark skipping.
         if name == "pytestmark":
             return
         # NOTE: no need to modify collect() this time, just mutate item
         # creation.
-        # TODO: can't we redo SpecClass the same way? And SpecModule??
-        item = super(SpecInstance, self)._makeitem(name, obj)
+        superb = super(SpecInstance, self)
+        attr = "_makeitem" if hasattr(superb, "_makeitem") else "makeitem"
+        item = getattr(superb, attr)(name, obj)
         # Replace any Class objects with SpecClass; this will automatically
         # recurse.
         # TODO: can we unify this with SpecModule's same bits?
