@@ -1,4 +1,5 @@
 from pytest import skip
+from pytest import __version__ as pytest_version
 
 # Load some fixtures we expose, without actually loading our entire plugin
 from pytest_relaxed.fixtures import environ  # noqa
@@ -7,6 +8,8 @@ from pytest_relaxed.fixtures import environ  # noqa
 # TODO: how best to make all of this opt-in/out? Reporter as separate plugin?
 # (May not be feasible if it has to assume something about how our collection
 # works?) CLI option (99% sure we can hook into that as a plugin)?
+
+pytest_version_info = tuple(map(int, pytest_version.split(".")[:3]))
 
 
 def _expect_regular_output(testdir):
@@ -225,7 +228,14 @@ OtherBehaviors
         assert "== FAILURES ==" in output
         assert "AssertionError" in output
         # Summary
-        assert "== 1 failed, 4 passed, 1 skipped in " in output
+        if pytest_version_info >= (5, 3):
+            expected_out = (
+                "== \x1b[31m\x1b[1m1 failed\x1b[0m, \x1b[32m4 passed\x1b[0m, "
+                "\x1b[33m1 skipped\x1b[0m\x1b[31m in "
+            )
+        else:
+            expected_out = "== 1 failed, 4 passed, 1 skipped in "
+        assert expected_out in output
 
     def test_nests_many_levels_deep_no_problem(self, testdir):
         testdir.makepyfile(
