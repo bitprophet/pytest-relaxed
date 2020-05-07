@@ -3,11 +3,14 @@ import types
 
 import six
 
+from pytest import __version__ as pytest_version
 from pytest import Class, Instance, Module
 
 # NOTE: don't see any other way to get access to pytest innards besides using
 # the underscored name :(
 from _pytest.python import PyCollector
+
+pytest_version_info = tuple(map(int, pytest_version.split(".")[:3]))
 
 
 # NOTE: these are defined here for reuse by both pytest's own machinery and our
@@ -45,6 +48,13 @@ class RelaxedMixin(PyCollector):
 
 class SpecModule(RelaxedMixin, Module):
 
+    @classmethod
+    def from_parent(cls, parent, fspath):
+        if pytest_version_info >= (5, 4):
+            return super(SpecModule, cls).from_parent(parent, fspath=fspath)
+        else:
+            return cls(parent=parent, fspath=fspath)
+
     def _is_test_obj(self, test_func, obj, name):
         # First run our super() test, which should be RelaxedMixin's.
         good_name = getattr(super(SpecModule, self), test_func)(obj, name)
@@ -69,6 +79,7 @@ class SpecModule(RelaxedMixin, Module):
         # Get whatever our parent picked up as valid test items (given our
         # relaxed name constraints above). It'll be nearly all module contents.
         items = super(SpecModule, self).collect()
+
         collected = []
         for item in items:
             # Replace Class objects with recursive SpecInstances (via
@@ -80,7 +91,7 @@ class SpecModule(RelaxedMixin, Module):
             # them to be handled by pytest's own unittest support) but since
             # those are almost always in test_prefixed_filenames anyways...meh
             if isinstance(item, Class):
-                item = SpecClass(item.name, item.parent)
+                item = SpecClass.from_parent(item.parent, name=item.name)
             collected.append(item)
         return collected
 
@@ -89,6 +100,13 @@ class SpecModule(RelaxedMixin, Module):
 # its lonesome
 class SpecClass(Class):
 
+    @classmethod
+    def from_parent(cls, parent, name):
+        if pytest_version_info >= (5, 4):
+            return super(SpecClass, cls).from_parent(parent, name=name)
+        else:
+            return cls(parent=parent, name=name)
+
     def collect(self):
         items = super(SpecClass, self).collect()
         collected = []
@@ -96,12 +114,19 @@ class SpecClass(Class):
         # recurse into inner classes.
         # TODO: is this ever not a one-item list? Meh.
         for item in items:
-            item = SpecInstance(name=item.name, parent=item.parent)
+            item = SpecInstance.from_parent(item.parent, name=item.name)
             collected.append(item)
         return collected
 
 
 class SpecInstance(RelaxedMixin, Instance):
+
+    @classmethod
+    def from_parent(cls, parent, name):
+        if pytest_version_info >= (5, 4):
+            return super(SpecInstance, cls).from_parent(parent, name=name)
+        else:
+            return cls(parent=parent, name=name)
 
     def _getobj(self):
         # Regular object-making first
@@ -172,5 +197,5 @@ class SpecInstance(RelaxedMixin, Instance):
         # recurse.
         # TODO: can we unify this with SpecModule's same bits?
         if isinstance(item, Class):
-            item = SpecClass(item.name, item.parent)
+            item = SpecClass.from_parent(item.parent, name=item.name)
         return item

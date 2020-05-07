@@ -28,7 +28,7 @@ def pytest_collect_file(path, parent):
     ):
         # Then use our custom module class which performs modified
         # function/class selection as well as class recursion
-        return SpecModule(path, parent)
+        return SpecModule.from_parent(parent, fspath=path)
 
 
 @pytest.mark.trylast  # So we can be sure builtin terminalreporter exists
