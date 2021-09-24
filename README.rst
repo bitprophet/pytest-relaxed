@@ -8,6 +8,9 @@ It is the spiritual successor to https://pypi.python.org/pypi/spec, but is
 built for ``pytest`` instead of ``nosetests``, and rethinks some aspects of
 the design (such as increased ability to opt-in to various behaviors.)
 
+For a development roadmap, see the maintainer's `roadmap page
+<http://bitprophet.org/projects#roadmap>`_.
+
 
 Rationale
 =========
