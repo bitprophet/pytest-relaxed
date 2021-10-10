@@ -12,7 +12,7 @@ jobs:
       - run: bandit --recursive --skip B101,B102 .
       - run: black --check . || true
       - run: codespell
-      - run: flake8 . --count --ignore=B003,F811 --max-complexity=10
+      - run: flake8 . --count --ignore=B003,F811,W503 --max-complexity=10
                       --max-line-length=88 --show-source --statistics
       - run: isort --check-only --profile black . || true
       - run: pip install -r requirements.txt || pip install --editable . || true
