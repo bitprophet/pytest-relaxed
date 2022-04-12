@@ -1,6 +1,5 @@
 import inspect
 import types
-from pathlib import Path
 
 import six
 
@@ -18,6 +17,7 @@ pytest_version_info = tuple(map(int, pytest_version.split(".")[:3]))
 if pytest_version_info < (7, 0, 0):
     from pytest import Instance
 else:
+    from pathlib import Path
     Instance = object
 
 # NOTE: these are defined here for reuse by both pytest's own machinery and our
