@@ -3,14 +3,17 @@ import types
 
 import six
 
-from pytest import __version__ as pytest_version
 from pytest import Class, Module
 
 # NOTE: don't see any other way to get access to pytest innards besides using
 # the underscored name :(
 from _pytest.python import PyCollector
 
-pytest_version_info = tuple(map(int, pytest_version.split(".")[:3]))
+try:
+    from pytest import version_tuple as pytest_version_info
+except ImportError:
+    from pytest import __version__ as pytest_version
+    pytest_version_info = tuple(map(int, pytest_version.split(".")[:3]))
 
 # https://docs.pytest.org/en/latest/deprecations.html#the-pytest-instance-collector
 # The pytest.Instance collector type has been removed in Pytest 7.0
