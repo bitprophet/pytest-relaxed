@@ -9,11 +9,7 @@ from pytest import Class, Module
 # the underscored name :(
 from _pytest.python import PyCollector
 
-try:
-    from pytest import version_tuple as pytest_version_info
-except ImportError:
-    from pytest import __version__ as pytest_version
-    pytest_version_info = tuple(map(int, pytest_version.split(".")[:3]))
+from .utils import pytest_version_info
 
 # https://docs.pytest.org/en/latest/deprecations.html#the-pytest-instance-collector
 # The pytest.Instance collector type has been removed in Pytest 7.0

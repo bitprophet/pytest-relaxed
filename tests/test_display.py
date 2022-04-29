@@ -1,6 +1,8 @@
 from pytest import skip
 from pytest import __version__ as pytest_version
 
+from pytest_relaxed.utils import pytest_version_info
+
 # Load some fixtures we expose, without actually loading our entire plugin
 from pytest_relaxed.fixtures import environ  # noqa
 
@@ -8,9 +10,6 @@ from pytest_relaxed.fixtures import environ  # noqa
 # TODO: how best to make all of this opt-in/out? Reporter as separate plugin?
 # (May not be feasible if it has to assume something about how our collection
 # works?) CLI option (99% sure we can hook into that as a plugin)?
-
-pytest_version_info = tuple(map(int, pytest_version.split(".")[:3]))
-
 
 def _expect_regular_output(testdir):
     output = testdir.runpytest().stdout.str()
