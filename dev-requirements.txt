@@ -11,7 +11,7 @@ twine==1.11.0
 # your stuff too early for coverage to track import/def/etc lines' :(
 coverage==4.3.4
 # Travis only, but why not
-codecov==1.6.3
+codecov==2.0.16
 # Task running
 invoke>=1.1,<1.2
 invocations==1.4.0
