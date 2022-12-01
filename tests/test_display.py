@@ -220,12 +220,17 @@ OtherBehaviors
     \x1b[31mbehavior four\x1b[0m
 """.lstrip()
         )
-        assert results in output
-        # Ensure we're not accidentally nixing failure, summary output
-        assert "== FAILURES ==" in output
-        assert "AssertionError" in output
-        # Summary
-        assert "== 1 failed, 4 passed, 1 skipped in " in output
+        for chunk in (
+            # Our own special sauce
+            results,
+            # Failure summary still present
+            "== FAILURES ==",
+            # Ditto error class
+            "AssertionError",
+            # And summary chunks (now colorized apparently?)
+            "1 failed", "4 passed", "1 skipped",
+        ):
+            assert chunk in output
 
     def test_nests_many_levels_deep_no_problem(self, testdir):
         testdir.makepyfile(
