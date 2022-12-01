@@ -80,7 +80,7 @@ class SpecModule(RelaxedMixin, Module):
             # them to be handled by pytest's own unittest support) but since
             # those are almost always in test_prefixed_filenames anyways...meh
             if isinstance(item, Class):
-                item = SpecClass(item.name, item.parent)
+                item = SpecClass.from_parent(item.parent, name=item.name)
             collected.append(item)
         return collected
 
@@ -96,7 +96,7 @@ class SpecClass(Class):
         # recurse into inner classes.
         # TODO: is this ever not a one-item list? Meh.
         for item in items:
-            item = SpecInstance(name=item.name, parent=item.parent)
+            item = SpecInstance.from_parent(parent=item.parent, name=item.name)
             collected.append(item)
         return collected
 
