@@ -1,6 +1,6 @@
 import re
 
-import pytest
+from pytest import ExitCode, mark
 
 
 # For 'testdir' fixture, mostly
@@ -187,7 +187,7 @@ class TestRelaxedMixin:
                         assert self.some_attr == 17
         """
         )
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
 
 
 class TestSpecModule:
@@ -317,7 +317,7 @@ MyStuff
         # stuff or otherwise doubling up on already-collected objects.
         assert "warnings summary" not in stdout
 
-    @pytest.mark.skip
+    @mark.skip
     def test_correctly_handles_marked_test_cases(self, testdir):
         # I.e. @pytest.mark.someflag objects at the class level...figure out
         # how real collectors handle these exactly? the "actual" test class we
@@ -344,7 +344,7 @@ class TestSpecInstance:
         # TODO: first thought was "why is this not automatic?", then realized
         # "duh, it'd be annoying if you wanted to test failure related behavior
         # a lot"...but still want some slightly nicer helper I think
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
 
     def test_nested_self_objects_exhibit_parent_attributes(self, testdir):
         # TODO: really starting to think going back to 'real' fixture files
@@ -361,7 +361,7 @@ class TestSpecInstance:
                         assert self.an_attr == 5
         """
         )
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
 
     def test_nesting_is_infinite(self, testdir):
         testdir.makepyfile(
@@ -377,7 +377,7 @@ class TestSpecInstance:
                                 assert self.an_attr == 5
         """
         )
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
 
     def test_overriding_works_naturally(self, testdir):
         testdir.makepyfile(
@@ -392,7 +392,7 @@ class TestSpecInstance:
                         assert self.an_attr == 7
         """
         )
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
 
     def test_normal_methods_from_outer_classes_are_not_copied(self, testdir):
         testdir.makepyfile(
@@ -406,7 +406,7 @@ class TestSpecInstance:
                         assert not hasattr(self, 'outer_test')
         """
         )
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
 
     def test_private_methods_from_outer_classes_are_copied(self, testdir):
         testdir.makepyfile(
@@ -424,7 +424,7 @@ class TestSpecInstance:
                         assert hasattr(self, '_outer_helper')
         """
         )
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
 
     def test_module_contents_are_not_copied_into_top_level_classes(
         self, testdir
@@ -438,4 +438,4 @@ class TestSpecInstance:
                     assert not hasattr(self, 'module_constant')
         """
         )
-        assert testdir.runpytest().ret == 0
+        assert testdir.runpytest().ret is ExitCode.OK
