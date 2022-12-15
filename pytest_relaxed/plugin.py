@@ -14,6 +14,8 @@ def pytest_ignore_collect(path, config):
     return path.basename.startswith("_")
 
 
+# TODO: it's possible this is more correctly done as pytest_collect_module,
+# since we require users specify python_files=* in their pytest.ini anyhow?
 def pytest_collect_file(path, parent):
     # Modify file selection to choose all .py files besides conftest.py.
     # (Skipping underscored names is handled up in pytest_ignore_collect, which
