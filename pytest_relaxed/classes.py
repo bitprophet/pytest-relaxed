@@ -66,8 +66,8 @@ class SpecModule(RelaxedMixin, Module):
         return self._is_test_obj("istestclass", obj, name)
 
     def collect(self):
-        # Get whatever our parent picked up as valid test items (given our
-        # relaxed name constraints above). It'll be nearly all module contents.
+        # Given we've overridden naming constraints etc above, just use
+        # superclass' collection logic for the rest of the necessary behavior.
         items = super().collect()
         collected = []
         for item in items:
@@ -154,19 +154,16 @@ class SpecInstance(RelaxedMixin, Instance):
                 setattr(obj, name, value)
         return obj
 
-    def _makeitem(self, name, obj):
-        # More pytestmark skipping.
-        if name == "pytestmark":
-            return
-        # NOTE: no need to modify collect() this time, just mutate item
-        # creation. TODO: but if collect() is still public, let's move to that
-        # sometime, if that'll work as well.
-        superb = super()
-        attr = "_makeitem" if hasattr(superb, "_makeitem") else "makeitem"
-        item = getattr(superb, attr)(name, obj)
+    def collect(self):
         # Replace any Class objects with SpecClass; this will automatically
-        # recurse.
+        # recurse. Pass other types through unmolested.
         # TODO: can we unify this with SpecModule's same bits?
-        if isinstance(item, Class):
-            item = SpecClass(item.name, item.parent)
-        return item
+        ret = []
+        for item in super().collect():
+            # More pytestmark skipping.
+            if item.name == "pytestmark":
+                continue
+            if isinstance(item, Class):
+                item = SpecClass.from_parent(parent=item.parent, name=item.name, obj=item.obj)
+            ret.append(item)
+        return ret

@@ -14,23 +14,27 @@ def pytest_ignore_collect(path, config):
     return path.basename.startswith("_")
 
 
-# TODO: it's possible this is more correctly done as pytest_collect_module,
-# since we require users specify python_files=* in their pytest.ini anyhow?
+# We need to use collect_file, not pycollect_makemodule, as otherwise users
+# _must_ specify a config blob to use us, vs that being optional.
+# TODO: otoh, I personally use it all the time and we "strongly recommend it"
+# so maybe find a way to make that config bit default somehow (update
+# docs/changelog appropriately), and then switch  hooks?
 def pytest_collect_file(path, parent):
     # Modify file selection to choose all .py files besides conftest.py.
     # (Skipping underscored names is handled up in pytest_ignore_collect, which
     # applies to directories too.)
     if (
-        path.ext == ".py"
-        and path.basename != "conftest.py"
+        path.ext != ".py"
+        or path.basename == "conftest.py"
         # Also skip anything prefixed with test_; pytest's own native
         # collection will get that stuff, and we don't _want_ to try modifying
         # such files anyways.
-        and not path.basename.startswith("test_")
+        or path.basename.startswith("test_")
     ):
-        # Then use our custom module class which performs modified
-        # function/class selection as well as class recursion
-        return SpecModule.from_parent(parent, fspath=path)
+        return
+    # Then use our custom module class which performs modified
+    # function/class selection as well as class recursion
+    return SpecModule.from_parent(parent, fspath=path)
 
 
 @pytest.mark.trylast  # So we can be sure builtin terminalreporter exists
