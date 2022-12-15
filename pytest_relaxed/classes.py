@@ -154,10 +154,6 @@ class SpecInstance(RelaxedMixin, Instance):
                 setattr(obj, name, value)
         return obj
 
-    # Stub for pytest >=3.0,<3.3 where _makeitem did not exist
-    def makeitem(self, *args, **kwargs):
-        return self._makeitem(*args, **kwargs)
-
     def _makeitem(self, name, obj):
         # More pytestmark skipping.
         if name == "pytestmark":
