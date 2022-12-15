@@ -47,7 +47,7 @@ class SpecModule(RelaxedMixin, Module):
 
     def _is_test_obj(self, test_func, obj, name):
         # First run our super() test, which should be RelaxedMixin's.
-        good_name = getattr(super(SpecModule, self), test_func)(obj, name)
+        good_name = getattr(super(), test_func)(obj, name)
         # If RelaxedMixin said no, we can't really say yes, as the name itself
         # was bad - private, other non test name like setup(), etc
         if not good_name:
@@ -68,7 +68,7 @@ class SpecModule(RelaxedMixin, Module):
     def collect(self):
         # Get whatever our parent picked up as valid test items (given our
         # relaxed name constraints above). It'll be nearly all module contents.
-        items = super(SpecModule, self).collect()
+        items = super().collect()
         collected = []
         for item in items:
             # Replace Class objects with recursive SpecInstances (via
@@ -90,7 +90,7 @@ class SpecModule(RelaxedMixin, Module):
 class SpecClass(Class):
 
     def collect(self):
-        items = super(SpecClass, self).collect()
+        items = super().collect()
         collected = []
         # Replace Instance objects with SpecInstance objects that know how to
         # recurse into inner classes.
@@ -105,7 +105,7 @@ class SpecInstance(RelaxedMixin, Instance):
 
     def _getobj(self):
         # Regular object-making first
-        obj = super(SpecInstance, self)._getobj()
+        obj = super()._getobj()
         # Then decorate it with our parent's extra attributes, allowing nested
         # test classes to appear as an aggregate of parents' "scopes".
         # NOTE: need parent.parent due to instance->class hierarchy
@@ -165,7 +165,7 @@ class SpecInstance(RelaxedMixin, Instance):
         # NOTE: no need to modify collect() this time, just mutate item
         # creation. TODO: but if collect() is still public, let's move to that
         # sometime, if that'll work as well.
-        superb = super(SpecInstance, self)
+        superb = super()
         attr = "_makeitem" if hasattr(superb, "_makeitem") else "makeitem"
         item = getattr(superb, attr)(name, obj)
         # Replace any Class objects with SpecClass; this will automatically
