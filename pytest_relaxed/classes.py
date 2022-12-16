@@ -1,13 +1,17 @@
 import inspect
+import logging
 import types
 
 import six
 
-from pytest import Class, Instance, Module
+from pytest import Class, Module
 
 # NOTE: don't see any other way to get access to pytest innards besides using
 # the underscored name :(
 from _pytest.python import PyCollector
+
+
+log = logging.getLogger("relaxed")
 
 
 # NOTE: these are defined here for reuse by both pytest's own machinery and our
