@@ -6,9 +6,10 @@ Changelog
 - :support:`-` Modernize codebase/project a bunch:
 
   - Dropped support for Python <3.6 (including 2.7)
-  - Pytest support upgraded to require (and be compatible with) versions >=5,
-    <=7. (If you were very attached to Pytest 4.x, a compatibility patch would
-    probably not be very large, and _might_ be accepted...)
+  - Pytest support upgraded to support, **and require**, Pytest >=7.
+
+    - This plugin never worked on Pytests 5 and 6 anyways, and supporting 5-7
+    appears to require a lot more effort than just 7.
 
 - :release:`1.1.5 <2019-06-14>`
 - :bug:`2` Fix compatibility with pytest versions 3.3 and above.
