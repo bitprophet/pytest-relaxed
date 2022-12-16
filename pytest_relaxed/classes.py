@@ -75,11 +75,7 @@ class SpecModule(RelaxedMixin, Module):
         items = super().collect()
         collected = []
         for item in items:
-            # Replace Class objects with recursive SpecInstances (via
-            # SpecClasses, so we don't lose some bits of parent Class).
-            # TODO: this may be way more than is necessary; possible we can
-            # recurse & unpack here, as long as we preserve parent/child
-            # relationships correctly?
+            # Replace Class objects with recursive SpecClasses
             # NOTE: we could explicitly skip unittest objects here (we'd want
             # them to be handled by pytest's own unittest support) but since
             # those are almost always in test_prefixed_filenames anyways...meh
@@ -89,38 +85,22 @@ class SpecModule(RelaxedMixin, Module):
         return collected
 
 
-# NOTE: no need to inherit from RelaxedMixin here as it doesn't do much by
-# its lonesome
-class SpecClass(Class):
-
-    def collect(self):
-        items = super().collect()
-        collected = []
-        # Replace Instance objects with SpecInstance objects that know how to
-        # recurse into inner classes.
-        # TODO: is this ever not a one-item list? Meh.
-        for item in items:
-            item = SpecInstance.from_parent(parent=item.parent, name=item.name)
-            collected.append(item)
-        return collected
-
-
-class SpecInstance(RelaxedMixin, Instance):
+class SpecClass(RelaxedMixin, Class):
 
     def _getobj(self):
         # Regular object-making first
         obj = super()._getobj()
-        # Then decorate it with our parent's extra attributes, allowing nested
-        # test classes to appear as an aggregate of parents' "scopes".
-        # NOTE: need parent.parent due to instance->class hierarchy
-        # NOTE: of course, skipping if we've gone out the top into a module etc
+        # Short circuit if this obj isn't a nested class (aka child):
+        # - no parent attr: implies module-level obj definition
+        # - parent attr, but isn't a class: implies method
         if (
             not hasattr(self, "parent")
-            or not hasattr(self.parent, "parent")
-            or not isinstance(self.parent.parent, SpecInstance)
+            or not isinstance(self.parent, SpecClass)
         ):
             return obj
-        parent_obj = self.parent.parent.obj
+        # Then decorate it with our parent's extra attributes, allowing nested
+        # test classes to appear as an aggregate of parents' "scopes".
+        parent_obj = self.parent.obj
         # Obtain parent attributes, etc not found on our obj (serves as both a
         # useful identifier of "stuff added to an outer class" and a way of
         # ensuring that we can override such attrs), and set them on obj
@@ -137,7 +117,9 @@ class SpecInstance(RelaxedMixin, Instance):
             if isinstance(value, six.class_types):
                 continue
             # Functions (methods) may get skipped, or not, depending:
-            if isinstance(value, types.MethodType):
+            # NOTE: as of pytest 7, for some reason the value appears as a
+            # function and not a method (???) so covering both bases...
+            if isinstance(value, (types.MethodType, types.FunctionType)):
                 # If they look like tests, they get skipped; don't want to copy
                 # tests around!
                 if istestfunction(name):
@@ -147,11 +129,7 @@ class SpecInstance(RelaxedMixin, Instance):
                 # target instance, otherwise the 'self' in the setup/helper is
                 # not the same 'self' as that in the actual test method it runs
                 # around or within!
-                # TODO: arguably, all setup or helper methods should become
-                # autouse class fixtures (see e.g. pytest docs under 'xunit
-                # setup on steroids')
-                func = six.get_method_function(value)
-                setattr(obj, name, six.create_bound_method(func, obj))
+                setattr(obj, name, value)
             # Anything else should be some data-type attribute, which is copied
             # verbatim / by-value.
             else:
@@ -159,9 +137,6 @@ class SpecInstance(RelaxedMixin, Instance):
         return obj
 
     def collect(self):
-        # Replace any Class objects with SpecClass; this will automatically
-        # recurse. Pass other types through unmolested.
-        # TODO: can we unify this with SpecModule's same bits?
         ret = []
         for item in super().collect():
             # More pytestmark skipping.

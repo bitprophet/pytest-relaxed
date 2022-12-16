@@ -325,7 +325,7 @@ MyStuff
         pass
 
 
-class TestSpecInstance:
+class TestSpecClass:
 
     def test_methods_self_objects_exhibit_class_attributes(self, testdir):
         # Mostly a sanity test; pytest seems to get out of the way enough that
