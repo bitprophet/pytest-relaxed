@@ -6,8 +6,9 @@ Changelog
 - :support:`-` Modernize codebase/project a bunch:
 
   - Dropped support for Python <3.6 (including 2.7)
-  - Pytest support upgraded to require 3.3+ and, more importantly, to be
-    compatible with version 5-7.
+  - Pytest support upgraded to require (and be compatible with) versions >=5,
+    <=7. (If you were very attached to Pytest 4.x, a compatibility patch would
+    probably not be very large, and _might_ be accepted...)
 
 - :release:`1.1.5 <2019-06-14>`
 - :bug:`2` Fix compatibility with pytest versions 3.3 and above.
