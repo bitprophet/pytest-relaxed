@@ -5,7 +5,7 @@ from invocations import docs, pytest as pytests, travis
 
 
 @task
-def coverage(c, html=True):
+def coverage(c, html=True, codecov=False):
     """
     Run coverage with coverage.py.
     """
@@ -20,7 +20,12 @@ def coverage(c, html=True):
     c.run("coverage run --source=pytest_relaxed -m pytest")
     if html:
         c.run("coverage html")
-        c.run("open htmlcov/index.html")
+    if codecov:
+        # Generate XML report from that already-gathered data (otherwise
+        # codecov generates it on its own and gets it wrong!)
+        c.run("coverage xml")
+        # Upload to Codecov
+        c.run("codecov")
 
 
 # TODO: good candidate for builtin-to-invoke "just wrap <other task> with a
