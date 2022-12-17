@@ -24,7 +24,15 @@ setup(
         # TODO: do we need to name the LHS 'pytest_relaxed' too? meh
         "pytest11": ["relaxed = pytest_relaxed.plugin"]
     },
-    install_requires=["pytest>=7", "six>=1,<2", "decorator>=4,<5"],
+    install_requires=[
+        # Difficult to support Pytest<7 + Pytest>=7 at same time, and
+        # pytest-relaxed never supported pytests 5 or 6, so...why bother!
+        "pytest>=7",
+        # For @raises, primarily. At press time, most available decorator
+        # versions (including 5.x) should work for us / our Python interpreter
+        # versions.
+        "decorator",
+    ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Framework :: Pytest",
