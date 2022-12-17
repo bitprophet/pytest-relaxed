@@ -6,6 +6,7 @@
 flake8==5.0.4
 # Packaging
 twine==3.8.0
+setuptools>=56.0.0
 # Test coverage (see note in tasks.py::coverage)
 coverage==6.2
 # Travis only, but why not
