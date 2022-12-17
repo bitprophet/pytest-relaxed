@@ -27,7 +27,6 @@ TEST_SUFFIX = re.compile(r"(Test|_test)$")
 # NOTE: much of the high level "replace default output bits" approach is
 # cribbed directly from pytest-sugar at 0.8.0
 class RelaxedReporter(TerminalReporter):
-
     def __init__(self, builtin):
         # Pass in the builtin reporter's config so we're not redoing all of its
         # initial setup/cli parsing/etc. NOTE: TerminalReporter is old-style :(

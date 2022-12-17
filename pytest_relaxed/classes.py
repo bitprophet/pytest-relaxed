@@ -46,7 +46,6 @@ class RelaxedMixin(PyCollector):
 
 
 class SpecModule(RelaxedMixin, Module):
-
     def _is_test_obj(self, test_func, obj, name):
         # First run our super() test, which should be RelaxedMixin's.
         good_name = getattr(super(), test_func)(obj, name)
@@ -84,16 +83,14 @@ class SpecModule(RelaxedMixin, Module):
 
 
 class SpecClass(RelaxedMixin, Class):
-
     def _getobj(self):
         # Regular object-making first
         obj = super()._getobj()
         # Short circuit if this obj isn't a nested class (aka child):
         # - no parent attr: implies module-level obj definition
         # - parent attr, but isn't a class: implies method
-        if (
-            not hasattr(self, "parent")
-            or not isinstance(self.parent, SpecClass)
+        if not hasattr(self, "parent") or not isinstance(
+            self.parent, SpecClass
         ):
             return obj
         # Then decorate it with our parent's extra attributes, allowing nested
@@ -141,6 +138,8 @@ class SpecClass(RelaxedMixin, Class):
             if item.name == "pytestmark":
                 continue
             if isinstance(item, Class):
-                item = SpecClass.from_parent(parent=item.parent, name=item.name, obj=item.obj)
+                item = SpecClass.from_parent(
+                    parent=item.parent, name=item.name, obj=item.obj
+                )
             ret.append(item)
         return ret

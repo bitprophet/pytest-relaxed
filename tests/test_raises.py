@@ -12,9 +12,7 @@ class OtherBoom(Exception):
 
 
 class Test_raises(object):
-
     def test_when_given_exception_raised_no_problem(self):
-
         @raises(Boom)
         def kaboom():
             raise Boom
@@ -34,7 +32,6 @@ class Test_raises(object):
         assert "Did not receive expected Boom!" in str(exc.value)
 
     def test_when_some_other_exception_raised_it_is_untouched(self):
-
         @raises(Boom)
         def kaboom():
             raise OtherBoom("sup")
