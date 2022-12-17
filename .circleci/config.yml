@@ -1,7 +1,19 @@
 version: 2.1
 
 orbs:
-  orb: invocations/orb@1.0.2
+  orb: invocations/orb@1.0.4
+
+
+jobs:
+  confirm-loaded:
+    executor:
+      name: orb/default
+      version: "3.6"
+    steps:
+      - orb/setup
+      - run: pytest -VV | grep pytest-relaxed
+      - orb/debug
+
 
 workflows:
   main:
@@ -12,6 +24,11 @@ workflows:
           name: Style check
       - orb/coverage:
           name: Test 3.6 (w/ coverage)
+      - confirm-loaded:
+          name: Confirm plugin loads into pytest
+      - orb/docs:
+          name: Docs
+          task: "docs --nitpick"
       - orb/test-release:
           name: Release test
       - orb/test:
