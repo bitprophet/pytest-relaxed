@@ -19,7 +19,7 @@ setup(
     project_urls={
         "Source": "https://github.com/bitprophet/pytest-relaxed",
         "Changelog": "https://github.com/bitprophet/pytest-relaxed/blob/main/docs/changelog.rst",  # noqa
-        "CI": "https://app.circleci.com/pipelines/github/bitprophet/pytest-relaxed",
+        "CI": "https://app.circleci.com/pipelines/github/bitprophet/pytest-relaxed",  # noqa
     },
     author="Jeff Forcier",
     author_email="jeff@bitprophet.org",
