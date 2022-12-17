@@ -1,3 +1,21 @@
+|version| |python| |license| |ci| |coverage|
+
+.. |version| image:: https://img.shields.io/pypi/v/pytest-relaxed
+    :target: https://pypi.org/project/pytest-relaxed/
+    :alt: PyPI - Package Version
+.. |python| image:: https://img.shields.io/pypi/pyversions/pytest-relaxed
+    :target: https://pypi.org/project/pytest-relaxed/
+    :alt: PyPI - Python Version
+.. |license| image:: https://img.shields.io/pypi/l/pytest-relaxed
+    :target: https://github.com/bitprophet/pytest-relaxed/blob/main/LICENSE
+    :alt: PyPI - License
+.. |ci| image:: https://img.shields.io/circleci/build/github/bitprophet/pytest-relaxed/main
+    :target: https://app.circleci.com/pipelines/github/bitprophet/pytest-relaxed
+    :alt: CircleCI
+.. |coverage| image:: https://img.shields.io/codecov/c/gh/bitprophet/pytest-relaxed
+    :target: https://app.codecov.io/gh/bitprophet/pytest-relaxed
+    :alt: Codecov
+
 ==============
 pytest-relaxed
 ==============

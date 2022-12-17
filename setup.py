@@ -16,6 +16,11 @@ setup(
     description="Relaxed test discovery/organization for pytest",
     license="BSD",
     url="https://pytest-relaxed.readthedocs.io/",
+    project_urls={
+        "Source": "https://github.com/bitprophet/pytest-relaxed",
+        "Changelog": "https://github.com/bitprophet/pytest-relaxed/blob/main/docs/changelog.rst",  # noqa
+        "CI": "https://app.circleci.com/pipelines/github/bitprophet/pytest-relaxed",
+    },
     author="Jeff Forcier",
     author_email="jeff@bitprophet.org",
     long_description="\n" + open("README.rst", encoding="utf-8").read(),
