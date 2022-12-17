@@ -2,7 +2,8 @@
 # Direct dev dependencies
 #
 
-# Linting
+# Linting/formatting
+black==22.8.0
 flake8==5.0.4
 # Packaging
 twine==3.8.0

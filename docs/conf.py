@@ -9,9 +9,9 @@ source_suffix = ".rst"
 master_doc = "index"
 exclude_patterns = ["_build"]
 
-project = u"pytest-relaxed"
+project = "pytest-relaxed"
 year = datetime.now().year
-copyright = u"%d Jeff Forcier" % year
+copyright = "%d Jeff Forcier" % year
 
 # Ensure project directory is on PYTHONPATH for version, autodoc access
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "..")))
