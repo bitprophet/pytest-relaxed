@@ -24,6 +24,7 @@ setup(
         # TODO: do we need to name the LHS 'pytest_relaxed' too? meh
         "pytest11": ["relaxed = pytest_relaxed.plugin"]
     },
+    python_requires=">=3.6",
     install_requires=[
         # Difficult to support Pytest<7 + Pytest>=7 at same time, and
         # pytest-relaxed never supported pytests 5 or 6, so...why bother!
@@ -39,14 +40,14 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Software Development :: Testing",
     ],
 )
