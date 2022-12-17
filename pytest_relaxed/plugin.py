@@ -1,6 +1,6 @@
 import pytest
 
-from .classes import SpecModule, log
+from .classes import SpecModule
 from .reporter import RelaxedReporter
 
 # NOTE: fixtures must be present in the module listed under our setup.py's

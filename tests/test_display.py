@@ -168,8 +168,8 @@ OtherBehaviors
         # Summary
         assert "== 1 failed, 4 passed, 1 skipped in " in output
 
-    def test_tests_are_colorized_by_test_result(  # noqa: F811,E501
-        self, testdir, environ
+    def test_tests_are_colorized_by_test_result(
+        self, testdir, environ  # noqa: F811,E501
     ):
         # Make sure py._io.TerminalWriters write colors despite pytest output
         # capturing, which would otherwise trigger a 'False' result for "should
