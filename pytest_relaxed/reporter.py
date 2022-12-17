@@ -86,7 +86,7 @@ class RelaxedReporter(TerminalReporter):
     def split(self, id_):
         # Split on pytest's :: joiner, and strip out our intermediate
         # SpecInstance objects (appear as '()')
-        headers = [x for x in id_.split("::")[1:] if x != "()"]
+        headers = [x for x in id_.split("::")[1:]]
         # Last one is the actual test being reported on, not a header
         leaf = headers.pop()
         return headers, leaf
