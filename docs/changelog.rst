@@ -9,7 +9,24 @@ Changelog
   - Pytest support upgraded to support, **and require**, Pytest >=7.
 
     - This plugin never worked on Pytests 5 and 6 anyways, and supporting 5-7
-    appears to require a lot more effort than just 7.
+      appears to require a lot more effort than just 7.
+
+  - Behavioral changes in Pytest internals have fixed a handful of sorta-bugs
+    present in pytest-relaxed under Pytest versions 3 and 4:
+
+    - The order of nested test display may change slightly, typically for the
+      better; eg under older versions, tests defined on a class might have been
+      displayed after subclasses/nested tests - now they're more likely to be
+      listed first, which was the original intent.
+    - These bugs sometimes enabled "state bleed", such as outer scopes
+      appearing to grant inner ones attributes set at runtime (eg by the outer
+      scope's ``setup``, even when the inner scope redefined ``setup``).
+
+      - If you encounter odd bugs after upgrading, please take a close look at
+        your code and make sure you weren't accidentally using such a
+        "feature". One good way to test for this is to run the "newly failing"
+        tests by themselves on the old dependencies -- they will likely also
+        fail there.
 
 - :release:`1.1.5 <2019-06-14>`
 - :bug:`2` Fix compatibility with pytest versions 3.3 and above.
