@@ -9,26 +9,22 @@ Based on original code from Fabric 1.x, specifically:
 Though modifications have been made since.
 """
 
+import io
 import sys
 from functools import wraps
 
-import six
-from six import BytesIO as IO
 
-
-class CarbonCopy(IO):
+class CarbonCopy(io.BytesIO):
     """
     An IO wrapper capable of multiplexing its writes to other buffer objects.
     """
 
-    # NOTE: because StringIO.StringIO on Python 2 is an old-style class we
-    # cannot use super() :(
     def __init__(self, buffer=b"", cc=None):
         """
         If ``cc`` is given and is a file-like object or an iterable of same,
         it/they will be written to whenever this instance is written to.
         """
-        IO.__init__(self, buffer)
+        super().__init__(buffer)
         if cc is None:
             cc = []
         elif hasattr(cc, "write"):
@@ -38,23 +34,23 @@ class CarbonCopy(IO):
     def write(self, s):
         # Ensure we always write bytes. This means that wrapped code calling
         # print(<a string object>) in Python 3 will still work. Sigh.
-        if isinstance(s, six.text_type):
+        if isinstance(s, str):
             s = s.encode("utf-8")
         # Write out to our capturing object & any CC's
-        IO.write(self, s)
+        super().write(s)
         for writer in self.cc:
             writer.write(s)
 
-    # Dumb hack to deal with py3 expectations; real sys.std(out|err) in Py3
-    # requires writing to a buffer attribute obj in some situations.
+    # Real sys.std(out|err) (as of Python 3) requires writing to a buffer
+    # attribute obj in some situations.
     @property
     def buffer(self):
         return self
 
     # Make sure we always hand back strings, even on Python 3
     def getvalue(self):
-        ret = IO.getvalue(self)
-        if isinstance(ret, six.binary_type):
+        ret = super().getvalue()
+        if isinstance(ret, bytes):
             ret = ret.decode("utf-8")
         return ret
 

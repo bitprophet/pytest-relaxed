@@ -2,8 +2,6 @@ import inspect
 import logging
 import types
 
-import six
-
 from pytest import Class, Module
 
 # NOTE: don't see any other way to get access to pytest innards besides using
@@ -114,7 +112,7 @@ class SpecClass(RelaxedMixin, Class):
                 continue
             # Classes get skipped; they'd always just be other 'inner' classes
             # that we don't want to copy elsewhere.
-            if isinstance(value, six.class_types):
+            if isinstance(value, type):
                 continue
             # Functions (methods) may get skipped, or not, depending:
             # NOTE: as of pytest 7, for some reason the value appears as a
