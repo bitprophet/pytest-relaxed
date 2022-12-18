@@ -19,7 +19,10 @@ def istestclass(name):
 
 
 def istestfunction(name):
-    return not (name.startswith("_") or name in ("setup", "teardown"))
+    return not (
+        name.startswith("_")
+        or name in ("setup", "setup_method", "teardown", "teardown_method")
+    )
 
 
 # All other classes in here currently inherit from PyCollector, and it is what

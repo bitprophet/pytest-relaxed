@@ -3,6 +3,11 @@ Changelog
 =========
 
 - :release:`2.0.0 <2022-12-15>`
+- :bug:`- major` Prior to version 2, we failed to correctly support true Pytest
+  setup/teardown methods (i.e. ``setup_method`` and ``teardown_method``) and
+  these would not get copied to inner class scopes. This has been fixed. We
+  still support old nose-style ``setup``/``teardown`` for now, despite them
+  going away in Pytest 8.
 - :support:`-` Modernize codebase/project a bunch:
 
   - Dropped support for Python <3.6 (including 2.7)

@@ -134,13 +134,18 @@ class TestRelaxedMixin:
             assert substring not in stdout
 
     def test_skips_setup_and_teardown(self, testdir):
-        # TODO: probably other special names we're still missing?
         testdir.makepyfile(
             foo="""
             def setup():
                 pass
 
             def teardown():
+                pass
+
+            def setup_method():
+                pass
+
+            def teardown_method():
                 pass
 
             def actual_test_here():
@@ -153,6 +158,12 @@ class TestRelaxedMixin:
                 def teardown(self):
                     pass
 
+                def setup_method(self):
+                    pass
+
+                def teardown_method(self):
+                    pass
+
                 def actual_nested_test_here(self):
                     pass
         """
@@ -162,6 +173,8 @@ class TestRelaxedMixin:
         # words 'setup' and 'teardown', heh.
         assert not re.match(r"^setup$", stdout)
         assert not re.match(r"^teardown$", stdout)
+        assert not re.match(r"^setup_method$", stdout)
+        assert not re.match(r"^teardown_method$", stdout)
         # Real tests not skipped
         assert "actual test here" in stdout
         assert "actual nested test here" in stdout
@@ -178,6 +191,20 @@ class TestRelaxedMixin:
             foo="""
             class Outer:
                 def setup(self):
+                    self.some_attr = 17
+
+                class inner:
+                    def actual_nested_test(self):
+                        assert self.some_attr == 17
+        """
+        )
+        assert testdir.runpytest().ret is ExitCode.OK
+
+    def test_setup_method_given_inner_class_instances(self, testdir):
+        testdir.makepyfile(
+            foo="""
+            class Outer:
+                def setup_method(self):
                     self.some_attr = 17
 
                 class inner:
