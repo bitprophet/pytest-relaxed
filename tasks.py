@@ -17,7 +17,9 @@ def coverage(c, html=True, codecov=False):
     # problem, thus no need for pytest-cov.
     # NOTE: this does NOT hold true for NON-PYTEST code, so
     # pytest-relaxed-USING modules can happily use pytest-cov.
-    c.run("coverage run --source=pytest_relaxed -m pytest")
+    c.run(
+        "coverage run --source=pytest_relaxed,tests --branch --module pytest"
+    )
     if html:
         c.run("coverage html")
     if codecov:
