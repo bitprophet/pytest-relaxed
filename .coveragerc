@@ -1,0 +1,5 @@
+[run]
+branch = True
+include =
+    pytest_relaxed/*.py
+    tests/*.py
