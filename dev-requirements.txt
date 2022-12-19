@@ -10,11 +10,13 @@ twine==3.8.0
 setuptools>=56.0.0
 # Test coverage (see note in tasks.py::coverage)
 coverage==6.2
-# Travis only, but why not
+# CI only, but why not
 codecov==2.1.12
 # Task running
-invoke==1.7.1
-invocations==2.6.1
+invoke @ git+https://github.com/pyinvoke/invoke@main
+invocations @ git+https://github.com/pyinvoke/invocations@main
+# Docs (also transitively via invocations; consider nuking again)
+releases @ git+https://github.com/bitprophet/releases@main
 
 # Ourselves!
 -e .
