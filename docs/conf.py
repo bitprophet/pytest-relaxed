@@ -11,7 +11,7 @@ exclude_patterns = ["_build"]
 
 project = "pytest-relaxed"
 year = datetime.now().year
-copyright = "%d Jeff Forcier" % year
+copyright = f"{year} Jeff Forcier"
 
 # Ensure project directory is on PYTHONPATH for version, autodoc access
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "..")))
