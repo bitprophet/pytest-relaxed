@@ -32,8 +32,7 @@ class CarbonCopy(io.BytesIO):
         self.cc = cc
 
     def write(self, s):
-        # Ensure we always write bytes. This means that wrapped code calling
-        # print(<a string object>) in Python 3 will still work. Sigh.
+        # Ensure we always write bytes.
         if isinstance(s, str):
             s = s.encode("utf-8")
         # Write out to our capturing object & any CC's
@@ -41,13 +40,13 @@ class CarbonCopy(io.BytesIO):
         for writer in self.cc:
             writer.write(s)
 
-    # Real sys.std(out|err) (as of Python 3) requires writing to a buffer
-    # attribute obj in some situations.
+    # Real sys.std(out|err) requires writing to a buffer attribute obj in some
+    # situations.
     @property
     def buffer(self):
         return self
 
-    # Make sure we always hand back strings, even on Python 3
+    # Make sure we always hand back strings
     def getvalue(self):
         ret = super().getvalue()
         if isinstance(ret, bytes):
@@ -67,7 +66,7 @@ def trap(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         # Use another CarbonCopy even though we're not cc'ing; for our "write
-        # bytes, return strings on py3" behavior. Meh.
+        # bytes, return strings" behavior. Meh.
         sys.stdall = CarbonCopy()
         my_stdout, sys.stdout = sys.stdout, CarbonCopy(cc=sys.stdall)
         my_stderr, sys.stderr = sys.stderr, CarbonCopy(cc=sys.stdall)

@@ -172,10 +172,6 @@ Test discovery on these inner classes is recursive, so you *can* nest them as
 deeply as you like. Naturally, as with all Python code, sometimes you can have
 too much of a good thing...but that's up to you.
 
-.. note::
-    If writing Python-2-old-style classes makes you uncomfortable, you can
-    write them as e.g. ``class SomethingUnderTest(object):`` - pytest-relaxed
-    doesn't actually care. This is (naturally) moot under Python 3.
 
 Nested class attributes
 -----------------------
