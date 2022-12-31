@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`2.0.0 <2022-12-31>`
 - :bug:`- major` Prior to version 2, we failed to correctly support true Pytest
   setup/teardown methods (i.e. ``setup_method`` and ``teardown_method``) and
   these would not get copied to inner class scopes. This has been fixed. We
