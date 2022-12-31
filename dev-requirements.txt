@@ -13,10 +13,10 @@ coverage==6.2
 # CI only, but why not
 codecov==2.1.12
 # Task running
-invoke @ git+https://github.com/pyinvoke/invoke@main
-invocations @ git+https://github.com/pyinvoke/invocations@main
+invoke>=2
+invocations>=3
 # Docs (also transitively via invocations; consider nuking again)
-releases @ git+https://github.com/bitprophet/releases@main
+releases>=2
 
 # Ourselves!
 -e .
