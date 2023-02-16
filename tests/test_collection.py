@@ -7,7 +7,7 @@ from pytest import ExitCode, mark
 pytest_plugins = "pytester"
 
 
-class Test_pytest_collect_file(object):
+class Test_pytest_collect_file:
     def test_only_loads_dot_py_files(self, testdir):
         testdir.makepyfile(
             somefile="""
@@ -237,7 +237,7 @@ class TestSpecModule:
             class Helper:
                 pass
 
-            class NewHelper(object):
+            class NewHelper:
                 pass
         """
         )
@@ -263,7 +263,7 @@ class TestSpecModule:
         # explicitly reject imported classes (i.e. if we only reject funcs).
         testdir.makepyfile(
             _util="""
-            class Callable(object):
+            class Callable:
                 def __call__(self):
                     pass
 

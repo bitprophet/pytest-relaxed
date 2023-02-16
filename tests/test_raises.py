@@ -11,7 +11,7 @@ class OtherBoom(Exception):
     pass
 
 
-class Test_raises(object):
+class Test_raises:
     def test_when_given_exception_raised_no_problem(self):
         @raises(Boom)
         def kaboom():
