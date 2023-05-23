@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`2.0.1 <2023-05-22>`
 - :bug:`9` Don't try loading Pytest fixture functions as if they were test
   functions. Classifying this as a bug even though it's a moderately sized
   change in behavior; it's vanishingly unlikely anybody was relying on this
