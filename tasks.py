@@ -64,5 +64,5 @@ def test(
     )
 
 
-ns = Collection(checks, coverage, docs, test, release)
+ns = Collection(checks.blacken, checks, coverage, docs, test, release)
 ns.configure({"blacken": {"find_opts": "-and -not -path './build*'"}})
