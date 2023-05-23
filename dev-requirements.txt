@@ -10,8 +10,6 @@ twine==3.8.0
 setuptools>=56.0.0
 # Test coverage (see note in tasks.py::coverage)
 coverage==6.2
-# CI only, but why not
-codecov==2.1.12
 # Task running
 invoke>=2
 invocations>=3
