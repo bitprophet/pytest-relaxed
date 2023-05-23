@@ -179,6 +179,24 @@ class TestRelaxedMixin:
         assert "actual test here" in stdout
         assert "actual nested test here" in stdout
 
+    def test_skips_pytest_fixtures(self, testdir):
+        testdir.makepyfile(
+            foo="""
+            from pytest import fixture
+
+            @fixture
+            def pls_noload():
+                yield
+
+            def actual_test_here():
+                pass
+        """
+        )
+        stdout = testdir.runpytest("-v").stdout.str()
+        assert "actual test here" in stdout
+        # will be in stdout as a failure and warning if bug present
+        assert "pls_noload" not in stdout
+
     def test_setup_given_inner_class_instances_when_inherited(self, testdir):
         # NOTE: without this functionality in place, we still see setup()
         # called on a per-test-method basis, but where 'self' is the outer

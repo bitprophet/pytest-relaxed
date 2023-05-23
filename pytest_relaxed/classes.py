@@ -18,11 +18,18 @@ def istestclass(name):
     return not name.startswith("_")
 
 
-def istestfunction(name):
-    return not (
-        name.startswith("_")
-        or name in ("setup", "setup_method", "teardown", "teardown_method")
+# NOTE: this is defined at top level due to a couple spots of reuse outside of
+# the mixin class itself.
+def istestfunction(obj, name):
+    is_hidden_name = name.startswith("_") or name in (
+        "setup",
+        "setup_method",
+        "teardown",
+        "teardown_method",
     )
+    # TODO: is this reliable? how about __pytest_wrapped__?
+    is_fixture = hasattr(obj, "_pytestfixturefunction")
+    return not (is_hidden_name or is_fixture)
 
 
 # All other classes in here currently inherit from PyCollector, and it is what
@@ -45,7 +52,7 @@ class RelaxedMixin(PyCollector):
         return istestclass(name)
 
     def istestfunction(self, obj, name):
-        return istestfunction(name)
+        return istestfunction(obj, name)
 
 
 class SpecModule(RelaxedMixin, Module):
@@ -120,7 +127,7 @@ class SpecClass(RelaxedMixin, Class):
             if isinstance(value, (types.MethodType, types.FunctionType)):
                 # If they look like tests, they get skipped; don't want to copy
                 # tests around!
-                if istestfunction(name):
+                if istestfunction(obj, name):
                     continue
                 # Non-test == they're probably lifecycle methods
                 # (setup/teardown) or helpers (_do_thing). Rebind them to the

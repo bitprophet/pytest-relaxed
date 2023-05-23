@@ -2,6 +2,10 @@
 Changelog
 =========
 
+- :bug:`9` Don't try loading Pytest fixture functions as if they were test
+  functions. Classifying this as a bug even though it's a moderately sized
+  change in behavior; it's vanishingly unlikely anybody was relying on this
+  somehow! Thanks to ``@cajopa`` for the report.
 - :release:`2.0.0 <2022-12-31>`
 - :bug:`- major` Prior to version 2, we failed to correctly support true Pytest
   setup/teardown methods (i.e. ``setup_method`` and ``teardown_method``) and
