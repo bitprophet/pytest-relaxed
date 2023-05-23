@@ -12,7 +12,7 @@ setuptools>=56.0.0
 coverage==6.2
 # Task running
 invoke>=2
-invocations>=3
+invocations>=3.3
 # Docs (also transitively via invocations; consider nuking again)
 releases>=2
 

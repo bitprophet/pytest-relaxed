@@ -1,5 +1,5 @@
 from invoke import task, Collection
-from invocations.checks import blacken
+from invocations import checks
 from invocations.packaging import release
 from invocations import docs, pytest as pytests
 
@@ -64,5 +64,5 @@ def test(
     )
 
 
-ns = Collection(blacken, coverage, docs, test, release)
+ns = Collection(checks, coverage, docs, test, release)
 ns.configure({"blacken": {"find_opts": "-and -not -path './build*'"}})
