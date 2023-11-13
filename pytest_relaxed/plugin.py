@@ -37,7 +37,7 @@ def pytest_collect_file(file_path, parent):
     return SpecModule.from_parent(parent=parent, path=file_path)
 
 
-@pytest.mark.trylast  # So we can be sure builtin terminalreporter exists
+@pytest.hookimpl(trylast=True)  # Be sure builtin terminalreporter exists
 def pytest_configure(config):
     # TODO: we _may_ sometime want to do the isatty/slaveinput/etc checks that
     # pytest-sugar does?
