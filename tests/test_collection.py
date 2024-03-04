@@ -208,7 +208,7 @@ class TestRelaxedMixin:
         testdir.makepyfile(
             foo="""
             class Outer:
-                def setup(self):
+                def setup_method(self):
                     self.some_attr = 17
 
                 class inner:
