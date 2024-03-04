@@ -9,9 +9,9 @@ from .reporter import RelaxedReporter
 from .fixtures import environ  # noqa
 
 
-def pytest_ignore_collect(path, config):
+def pytest_ignore_collect(collection_path, config):
     # Ignore files and/or directories marked as private via Python convention.
-    return path.basename.startswith("_")
+    return collection_path.name.startswith("_")
 
 
 # We need to use collect_file, not pycollect_makemodule, as otherwise users
