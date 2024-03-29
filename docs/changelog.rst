@@ -2,6 +2,8 @@
 Changelog
 =========
 
+- :bug:`32` Fix dangling compatibility issues with pytest version 8.x. Thanks
+  to Alex Gaynor for the patch!
 - :release:`2.0.1 <2023-05-22>`
 - :bug:`9` Don't try loading Pytest fixture functions as if they were test
   functions. Classifying this as a bug even though it's a moderately sized
