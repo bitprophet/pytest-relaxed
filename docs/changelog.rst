@@ -2,6 +2,7 @@
 Changelog
 =========
 
+- :release:`2.0.2 <2024-03-29>`
 - :bug:`32` Fix dangling compatibility issues with pytest version 8.x. Thanks
   to Alex Gaynor for the patch!
 - :release:`2.0.1 <2023-05-22>`
