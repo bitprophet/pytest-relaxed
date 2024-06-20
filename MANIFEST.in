@@ -6,3 +6,4 @@ recursive-exclude docs/_build *
 include dev-requirements.txt
 recursive-include tests *
 recursive-exclude tests *.pyc *.pyo
+include pytest.ini
